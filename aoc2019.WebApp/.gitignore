@@ -1,0 +1,10 @@
+# Publish profiles
+Properties/PublishProfiles/
+
+# Publish directory for github pages without unnecessary dlls
+/_Publish/*
+!/_Publish
+/_Publish/aoc2019.WebApp/*
+!/_Publish/aoc2019.WebApp/
+/_Publish/aoc2019.WebApp/*
+!/_Publish/aoc2019.WebApp/dist

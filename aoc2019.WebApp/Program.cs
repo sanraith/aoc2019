@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Blazor.Hosting;
 
-namespace aoc2019
+namespace aoc2019.WebApp
 {
     public class Program
     {

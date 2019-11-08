@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace aoc2019
+namespace aoc2019.WebApp
 {
     public class Startup
     {
