@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc2019.WebApp", "aoc2019.WebApp\aoc2019.WebApp.csproj", "{8615F9FC-A6C9-44B7-A153-5F546D62CDDD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2019.WebApp", "aoc2019.WebApp\aoc2019.WebApp.csproj", "{8615F9FC-A6C9-44B7-A153-5F546D62CDDD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{648E00F6-139D-4B10-A216-98A2F8694C9E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{86A2CBD2-F8CB-4C3D-B2AC-CF1B23CADE5D}"
+	ProjectSection(SolutionItems) = preProject
+		docs\index.html = docs\index.html
 	EndProjectSection
 EndProject
 Global
@@ -25,6 +30,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{86A2CBD2-F8CB-4C3D-B2AC-CF1B23CADE5D} = {648E00F6-139D-4B10-A216-98A2F8694C9E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5BD01C15-2E62-4ED8-B6C3-85E0F7430AD1}
