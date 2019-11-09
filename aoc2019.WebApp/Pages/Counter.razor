@@ -1,16 +1,20 @@
 ﻿@page "/counter"
+@inject ICountTracker CountTracker
+@using aoc2019.WebApp.Services;
 
 <h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<p>Current count: @CountTracker.Value</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="IncrementCount">Add @IncrementAmount</button>
+<button class="btn btn-primary" @onclick="DecrementCount">Substract @IncrementAmount</button>
 
 @code {
-    private int currentCount = 0;
+    //[Inject]
+    //public ICountTrack CountTracker { get; set; }
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
+    [Parameter] public int IncrementAmount { get; set; } = 1;
+
+    private void IncrementCount() => CountTracker.Value += IncrementAmount;
+    private void DecrementCount() => CountTracker.Value -= IncrementAmount;
 }

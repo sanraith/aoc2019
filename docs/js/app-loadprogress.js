@@ -2,7 +2,7 @@
 // keep a handle on the original browser console.error
 const mmerr = console.error;
 const xhrsend = window.XMLHttpRequest.prototype.send;
-const maxResourceCount = 30;
+const maxResourceCount = 35;
 const logResourceCount = true;
 var loadedResourceCount = 0;
 
@@ -81,16 +81,20 @@ function endXHR(e) {
     // Update total progress
     loadedResourceCount++;
     if (logResourceCount) {
-        console.info("Loaded resources: " + loadedResourceCount);
+        console.info("Loaded resource #" + loadedResourceCount + ": " + filename);
     }
     var totalProgress = document.querySelector('#totalProgress');
     if (totalProgress) {
         totalProgress.value = Math.min(maxResourceCount - 1, loadedResourceCount);
     }
 
-    // Remove completed items from the list
     const fileList = document.querySelector('#file_list');
     if (fileList) {
+        // Update progress bars which did not know their max value
+        var pr = fileList.querySelector("li[name='" + filename + "'] > progress");
+        if (pr) { pr.max = e.loaded; pr.value = e.loaded; }
+
+        // Remove completed items from the list
         var prs = fileList.querySelectorAll("li > progress");
         prs.forEach((pr) => {
             if (fileList.querySelectorAll("li > progress").length <= 1) {

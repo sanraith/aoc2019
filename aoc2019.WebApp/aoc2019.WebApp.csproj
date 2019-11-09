@@ -12,4 +12,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Blazor.DevServer" Version="3.1.0-preview2.19528.8" PrivateAssets="all" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\aoc2019.Puzzles\aoc2019.Puzzles.csproj" />
+  </ItemGroup>
+
 </Project>
