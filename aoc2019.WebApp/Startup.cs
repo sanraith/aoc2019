@@ -9,6 +9,7 @@ namespace aoc2019.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICountTracker, CountTracker>();
+            services.AddSingleton<IPuzzleSolutionHandler, PuzzleSolutionHandler>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)
