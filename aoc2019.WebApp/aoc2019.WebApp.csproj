@@ -16,4 +16,17 @@
     <ProjectReference Include="..\aoc2019.Puzzles\aoc2019.Puzzles.csproj" />
   </ItemGroup>
 
+  <Target Name="DeleteInputs" BeforeTargets="BeforeBuild">
+    <RemoveDir Directories="$(MSBuildThisFileDirectory)wwwroot\input" />
+    <Message Importance="high" Text="Deleting input files from WebApp wwwroot..." />
+  </Target>
+
+  <Target Name="CopyInputs" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <InputFiles Include="$(MSBuildThisFileDirectory)..\aoc2019.Puzzles\Input\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(InputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)wwwroot\input\" />
+    <Message Importance="high" Text="Copying input files to WebApp wwwroot..." />
+  </Target>
+  
 </Project>
