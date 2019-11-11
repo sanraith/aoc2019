@@ -11,6 +11,7 @@ namespace aoc2019.WebApp
         {
             services.AddSingleton<ICountTracker, CountTracker>();
             services.AddSingleton<ISolutionHandler, SolutionHandler>();
+            services.AddSingleton<IInputHandler, InputHandler>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)
