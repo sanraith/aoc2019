@@ -12,7 +12,7 @@ namespace aoc2019.Puzzles.Solutions
 
         public override string Part2(string input)
         {
-            return input.Reverse().ToString();
+            return new string(input.Reverse().ToArray());
         }
     }
 }

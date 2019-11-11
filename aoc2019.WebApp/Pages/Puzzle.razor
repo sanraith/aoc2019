@@ -12,28 +12,66 @@
 else
 {
     <h3>Puzzle @SolutionMetadata.Day</h3>
-    <h4>Input:</h4>
-    <pre>@Input</pre>
+
+    if (Input == null)
+    {
+        <span>Loading input...</span>
+    }
+    else
+    {
+        <button @onclick="Solve">Solve</button>
+        <br />
+        foreach (var (result, number) in Results.Select((x, i) => (x, i + 1)))
+        {
+            <label for="part@(number)result">Part @(number)</label>
+            <input name="part@(number)result" type="text" readonly value="@result" />
+            <br />
+        }
+
+        <h4>Input:</h4>
+        <pre>@Input</pre>
+    }
 }
 
 @code {
     [Parameter]
     public string Day { get; set; }
 
-    public SolutionMetadata SolutionMetadata { get; private set; }
-
+    private SolutionMetadata SolutionMetadata { get; set; }
     private string Input { get; set; }
+    private List<string> Results { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
+        SolutionMetadata = null;
+        Input = null;
+        Results = new List<string> { "?", "?" };
         if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
         {
             SolutionMetadata = solutionMetadata;
             Input = await InputHandler.GetInputAsync(solutionMetadata.Day);
         }
-        else
+    }
+
+    private Task Solve()
+    {
+        Results = new List<string>();
+        var solution = SolutionMetadata.CreateInstance();
+        Results.Add(ExceptionToString(Input, solution.Part1));
+        Results.Add(ExceptionToString(Input, solution.Part2));
+
+        return Task.FromResult(true);
+    }
+
+    private string ExceptionToString(string input, Func<string, string> func)
+    {
+        try
         {
-            SolutionMetadata = null;
+            return func(input);
+        }
+        catch (Exception e)
+        {
+            return e.ToString();
         }
     }
 }
