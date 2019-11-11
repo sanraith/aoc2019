@@ -1,3 +1,4 @@
+using aoc2019.Puzzles;
 using aoc2019.WebApp.Services;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,7 @@ namespace aoc2019.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ICountTracker, CountTracker>();
-            services.AddSingleton<IPuzzleSolutionHandler, PuzzleSolutionHandler>();
+            services.AddSingleton<ISolutionHandler, SolutionHandler>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

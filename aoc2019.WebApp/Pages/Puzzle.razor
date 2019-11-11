@@ -1,8 +1,6 @@
-﻿@using aoc2019.WebApp.Services
-@using aoc2019.WebApp.Model
+﻿@using aoc2019.Puzzles
 @page "/puzzle"
 @page "/puzzle/{day}"
-@inject IPuzzleSolutionHandler PuzzleSolutionHandler
 
 @if (SolutionMetadata == null)
 {
@@ -19,10 +17,13 @@ else
 
     public SolutionMetadata SolutionMetadata { get; private set; }
 
+    [Inject]
+    private ISolutionHandler SolutionHandler { get; set; }
+
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
-        if (int.TryParse(Day, out var dayNumber) && PuzzleSolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
+        if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
         {
             SolutionMetadata = solutionMetadata;
         }

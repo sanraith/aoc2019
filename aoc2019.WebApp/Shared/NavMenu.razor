@@ -1,5 +1,5 @@
-﻿@using aoc2019.WebApp.Services;
-@inject IPuzzleSolutionHandler PuzzleSolutionHandler
+﻿@using aoc2019.Puzzles;
+@inject ISolutionHandler SolutionHandler
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">aoc2019.WebApp</a>
@@ -26,9 +26,9 @@
             var smallText = "";
             var href = $"puzzle/{day}";
             var iconClass = "oi-circle-x";
-            if (PuzzleSolutionHandler.Solutions.TryGetValue(day, out var solution))
+            if (SolutionHandler.Solutions.TryGetValue(day, out var solution))
             {
-                smallText = $" - {solution.Name}";
+                smallText = $" - {solution.Title}";
                 iconClass = "oi-circle-check";
             }
             <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">

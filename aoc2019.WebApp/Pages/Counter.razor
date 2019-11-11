@@ -10,9 +10,6 @@
 <button class="btn btn-primary" @onclick="DecrementCount">Substract @IncrementAmount</button>
 
 @code {
-    //[Inject]
-    //public ICountTrack CountTracker { get; set; }
-
     [Parameter] public int IncrementAmount { get; set; } = 1;
 
     private void IncrementCount() => CountTracker.Value += IncrementAmount;
