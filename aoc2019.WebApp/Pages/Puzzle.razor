@@ -28,6 +28,12 @@ else
             <br />
         }
 
+        @if (IsWorking)
+        {
+            <span>Calculating...</span>
+            <br />
+        }
+
         <h4>Input:</h4>
         <pre>@Input</pre>
     }
@@ -40,12 +46,15 @@ else
     private SolutionMetadata SolutionMetadata { get; set; }
     private string Input { get; set; }
     private List<string> Results { get; set; }
+    private bool IsWorking { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    protected override Task OnParametersSetAsync() => Init();
+
+    private async Task Init()
     {
         SolutionMetadata = null;
         Input = null;
-        Results = new List<string> { "?", "?" };
+        Results = new List<string> { };
         if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
         {
             SolutionMetadata = solutionMetadata;
@@ -53,21 +62,29 @@ else
         }
     }
 
-    private Task Solve()
-    {
-        Results = new List<string>();
-        var solution = SolutionMetadata.CreateInstance();
-        Results.Add(ExceptionToString(Input, solution.Part1));
-        Results.Add(ExceptionToString(Input, solution.Part2));
-
-        return Task.FromResult(true);
-    }
-
-    private string ExceptionToString(string input, Func<string, string> func)
+    private async Task Solve()
     {
         try
         {
-            return func(input);
+            IsWorking = true;
+            Results = new List<string>();
+            var solution = SolutionMetadata.CreateInstance();
+            StateHasChanged();
+            Results.Add(await ExceptionToString(solution.Part1));
+            StateHasChanged();
+            Results.Add(await ExceptionToString(solution.Part2));
+        }
+        finally
+        {
+            IsWorking = false;
+        }
+    }
+
+    private async Task<string> ExceptionToString(Func<string, Task<string>> func)
+    {
+        try
+        {
+            return await func(Input);
         }
         catch (Exception e)
         {

@@ -1,17 +1,20 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Solutions
 {
     [Puzzle("First puzzle")]
     public sealed class Day01 : SolutionBase
     {
-        public override string Part1(string input)
+        public override async Task<string> Part1(string input)
         {
+            await Task.Delay(1000);
             return input;
         }
 
-        public override string Part2(string input)
+        public override async Task<string> Part2(string input)
         {
+            await Task.Delay(1000);
             return new string(input.Reverse().ToArray());
         }
     }
