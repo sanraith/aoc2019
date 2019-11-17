@@ -13,6 +13,9 @@ set docsbase=docs
 set distbase=%webappbase%\bin\Release\netstandard2.0\publish\aoc2019.WebApp\dist
 set githuburl=https://sanraith.github.io/aoc2019/
 
+echo Cleaning %webappbase% publish directory
+rmdir /S /Q %webappbase%\bin\Release\netstandard2.0
+
 echo Publishing %webappbase%
 cd %webappbase%
 dotnet publish -c Release

@@ -17,16 +17,16 @@
   </ItemGroup>
 
   <Target Name="DeleteInputs" BeforeTargets="BeforeBuild">
-    <RemoveDir Directories="$(MSBuildThisFileDirectory)wwwroot\input" />
     <Message Importance="high" Text="Deleting input files from WebApp wwwroot..." />
+    <RemoveDir Directories="$(MSBuildThisFileDirectory)wwwroot\input" />
   </Target>
 
   <Target Name="CopyInputs" BeforeTargets="BeforeBuild">
+    <Message Importance="high" Text="Copying input files to WebApp wwwroot..." />
     <ItemGroup>
       <InputFiles Include="$(MSBuildThisFileDirectory)..\aoc2019.Puzzles\Input\*" />
     </ItemGroup>
     <Copy SourceFiles="@(InputFiles)" DestinationFolder="$(MSBuildThisFileDirectory)wwwroot\input\" />
-    <Message Importance="high" Text="Copying input files to WebApp wwwroot..." />
   </Target>
   
 </Project>
