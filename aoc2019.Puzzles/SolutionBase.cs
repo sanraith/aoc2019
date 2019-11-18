@@ -15,8 +15,22 @@ namespace aoc2019.Puzzles
             ProgressUpdated?.Invoke(this, null);
         }
 
+        protected Task HandleUserInputIfNeeded()
+        {
+            if (Environment.TickCount >= myTargetTickCount)
+            {
+                myTargetTickCount += 200;
+                return Task.Delay(1, CancellationToken);
+            }
+            return CompletedTask;
+        }
+
         public abstract Task<string> Part1(string input);
 
         public virtual Task<string> Part2(string input) => throw new NotImplementedException();
+        
+        private int myTargetTickCount = Environment.TickCount;
+
+        private static readonly Task CompletedTask = Task.FromResult(true);
     }
 }
