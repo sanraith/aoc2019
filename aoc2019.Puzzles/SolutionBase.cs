@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,29 +9,33 @@ namespace aoc2019.Puzzles
     {
         public event EventHandler<EventArgs> ProgressUpdated;
 
+        public int MillisecondsBetweenProgressUpdates { get; set; } = 200;
+
         public CancellationToken CancellationToken { get; set; }
-
-        protected void UpdateProgress()
-        {
-            ProgressUpdated?.Invoke(this, null);
-        }
-
-        protected Task HandleUserInputIfNeeded()
-        {
-            if (Environment.TickCount >= myTargetTickCount)
-            {
-                myTargetTickCount += 200;
-                return Task.Delay(1, CancellationToken);
-            }
-            return CompletedTask;
-        }
 
         public abstract Task<string> Part1(string input);
 
         public virtual Task<string> Part2(string input) => throw new NotImplementedException();
-        
-        private int myTargetTickCount = Environment.TickCount;
 
-        private static readonly Task CompletedTask = Task.FromResult(true);
+        /// <summary>
+        /// Returns true if <see cref="UpdateProgressAsync"/> should be called to update the UI of the solution runner. This happens every couple of milliseconds.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        protected bool IsUpdateProgressNeeded() => Environment.TickCount >= myUpdateTick;
+
+        /// <summary>
+        /// Updates the UI of the solution runner with the current progress, and schedules the next update a couple of milliseconds in the future.
+        /// </summary>
+        protected Task UpdateProgressAsync()
+        {
+            myUpdateTick = Environment.TickCount + MillisecondsBetweenProgressUpdates;
+            ProgressUpdated?.Invoke(this, new EventArgs());
+            return Task.Delay(1, CancellationToken);
+        }
+
+        /// <summary>
+        /// A scheduled tick from <see cref="Environment.TickCount"/>, when a progress update should happen.
+        /// </summary>
+        private int myUpdateTick = Environment.TickCount;
     }
 }
