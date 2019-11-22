@@ -1,4 +1,4 @@
-# Advent of Code 2019 solutions
+# Advent of Code 2019 solutions [![](https://github.com/sanraith/aoc2019/workflows/.NET%20Core/badge.svg)](https://github.com/sanraith/aoc2019/actions)
 Solutions for [Advent of Code 2019](https://adventofcode.com/2019) in C# with a Blazor WebAssembly runner.  
 Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/)
 
@@ -12,7 +12,7 @@ Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2
 | <code>docs</code>					| The published version of <code>aoc2019.WebApp</code>. Available at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/).
 
 # Build and run
-Make sure <code>.NET Core SDK 3.1.100-preview2-014645</code> or later is installed.  
+Make sure <code>.NET Core SDK 3.1.100-preview3-014645</code> or later is installed.  
 - <code>dotnet build</code>
 - Blazor runner:
     - <code>dotnet run --project aoc2019.WebApp</code>
