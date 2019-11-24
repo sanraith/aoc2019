@@ -6,7 +6,7 @@ namespace aoc2019.Puzzles
 {
     public interface ISolution
     {
-        event EventHandler<EventArgs> ProgressUpdated;
+        event EventHandler<SolutionProgressEventArgs> ProgressUpdated;
 
         CancellationToken CancellationToken { get; set; }
 

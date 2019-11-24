@@ -7,7 +7,7 @@ namespace aoc2019.Puzzles
 {
     public abstract class SolutionBase : ISolution
     {
-        public event EventHandler<EventArgs> ProgressUpdated;
+        public event EventHandler<SolutionProgressEventArgs> ProgressUpdated;
 
         public int MillisecondsBetweenProgressUpdates { get; set; } = 200;
 
@@ -16,6 +16,8 @@ namespace aoc2019.Puzzles
         public abstract Task<string> Part1(string input);
 
         public virtual Task<string> Part2(string input) => throw new NotImplementedException();
+
+        protected virtual SolutionProgress Progress { get; set; } = new SolutionProgress();
 
         /// <summary>
         /// Returns true if <see cref="UpdateProgressAsync"/> should be called to update the UI of the solution runner. This happens every couple of milliseconds.
@@ -29,7 +31,7 @@ namespace aoc2019.Puzzles
         protected Task UpdateProgressAsync()
         {
             myUpdateTick = Environment.TickCount + MillisecondsBetweenProgressUpdates;
-            ProgressUpdated?.Invoke(this, new EventArgs());
+            ProgressUpdated?.Invoke(this, new SolutionProgressEventArgs(Progress));
             return Task.Delay(1, CancellationToken);
         }
 

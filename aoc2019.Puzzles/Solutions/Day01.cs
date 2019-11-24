@@ -12,10 +12,14 @@ namespace aoc2019.Puzzles.Solutions
         {
             var sum = 0;
             var mainSw = Stopwatch.StartNew();
-            for (int i = 0; i < 5000000; i++)
+            for (int i = 0; i < Max; i++)
             {
                 sum += (i % 2) * -1;
-                if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }
+                if (IsUpdateProgressNeeded())
+                {
+                    Progress.Percentage = i / (double)Max * 100;
+                    await UpdateProgressAsync();
+                }
             }
             return mainSw.ElapsedMilliseconds.ToString();
         }
@@ -25,12 +29,14 @@ namespace aoc2019.Puzzles.Solutions
             await UpdateProgressAsync();
             var sum = 0;
             var mainSw = Stopwatch.StartNew();
-            for (int i = 0; i < 5000000; i++)
+            for (int i = 0; i < Max; i++)
             {
                 sum += (i % 2) * -1;
             }
 
             return mainSw.ElapsedMilliseconds.ToString();
         }
+
+        private const int Max = 5000000;
     }
 }

@@ -20,34 +20,58 @@ else
     }
     else
     {
-        <button @onclick="SolveAsync" disabled="@(IsWorking?"disabled":null)">@(IsWorking ? "Calculating..." : "Solve")</button>
-        <button @onclick="Cancel" style="@(IsWorking ? null : "display:none")">Cancel</button>
-        <br />
+        <p style="margin-bottom: 1em">
+            <button @onclick="SolveAsync" disabled="@(IsWorking ? "disabled" : null)">@(IsWorking ? "Calculating..." : "Solve")</button>
+            <button @onclick="Cancel" style="@(IsWorking ? null : "display:none")">Cancel</button>
+        </p>
+
+        var isProgressBarRendered = false;
         foreach (var (result, number) in Results.Select((x, i) => (x, i + 1)))
         {
-            <label for="part@(number)result">Part @(number):</label>
-            switch (result)
-            {
-                case string text:
-                    <input name="part@(number)result" type="text" readonly value="@result" />
-                    break;
-                case TaskCanceledException _:
-                    <span>Canceled.</span>
-                    break;
-                case NotImplementedException _:
-                    <span>Not implemented.</span>
-                    break;
-                case Exception exception:
-                    <span>Error - @exception</span>
-                    break;
-                case null when IsWorking:
-                    <span>Calculating...</span>
-                    break;
-                default:
-                    <span>no result.</span>
-                    break;
-            }
-            <br />
+            <table style="border:0">
+                <tr>
+
+                    <td style="vertical-align: middle; padding-right: 1em">Part @(number):</td>
+                    <td style="vertical-align: middle;">
+                        @switch (result)
+                        {
+                            case string text:
+                                <input name="part@(number)result" type="text" readonly value="@result" />
+                                break;
+                            case TaskCanceledException _:
+                                <span>Canceled.</span>
+                                break;
+                            case NotImplementedException _:
+                                <span>Not implemented.</span>
+                                break;
+                            case Exception exception:
+                                <span>Error - @exception</span>
+                                break;
+                            case null when IsWorking:
+                                if (!isProgressBarRendered)
+                                {
+                                    isProgressBarRendered = true;
+                                    <div class="progress" style="width: 200px; height: 2em">
+                                        @if (Progress.Percentage > 0)
+                                        {
+                                            var percentage = (int)Progress.Percentage;
+                                            var percentageString = $"{percentage}%";
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: @percentageString" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        }
+                                    </div>
+                                }
+                                break;
+                            default:
+                                <span>no result.</span>
+                                break;
+                        }
+                    </td>
+                </tr>
+            </table>
         }
 
         <h4>Input:</h4>
@@ -56,6 +80,8 @@ else
 }
 
 @code {
+    public int MillisBetweenProgressRender { get; set; } = 500;
+
     [Parameter]
     public string Day { get; set; }
 
@@ -63,8 +89,10 @@ else
     private string Input { get; set; }
     private object[] Results { get; set; }
     private bool IsWorking { get; set; }
+    private SolutionProgress Progress { get; set; }
 
     private CancellationTokenSource CancellationTokenSource;
+    private int ProgressRenderTick = Environment.TickCount;
 
     protected override Task OnParametersSetAsync() => Init();
     private void Cancel() => CancellationTokenSource?.Cancel(true);
@@ -75,6 +103,7 @@ else
         SolutionMetadata = null;
         Input = null;
         Results = null;
+        Progress = new SolutionProgress();
         if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
         {
             SolutionMetadata = solutionMetadata;
@@ -86,22 +115,36 @@ else
     private async Task SolveAsync()
     {
         CancellationTokenSource = new CancellationTokenSource();
+        ISolution solution = null;
         try
         {
             IsWorking = true;
             InputHandler.ClearResults(SolutionMetadata.Day);
-            var solution = SolutionMetadata.CreateInstance();
+            solution = SolutionMetadata.CreateInstance();
             solution.CancellationToken = CancellationTokenSource.Token;
+            solution.ProgressUpdated += OnProgressUpdate;
 
             foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1, solution.Part2 }.Select((x, i) => (x, i)))
             {
+                Progress = new SolutionProgress();
                 StateHasChanged();
                 Results[index] = await ExceptionToResult(part);
             }
         }
         finally
         {
+            if (solution != null) { solution.ProgressUpdated -= OnProgressUpdate; }
             IsWorking = false;
+        }
+    }
+
+    private void OnProgressUpdate(object sender, SolutionProgressEventArgs args)
+    {
+        Progress = args.Progress;
+        if (Environment.TickCount > ProgressRenderTick)
+        {
+            StateHasChanged();
+            ProgressRenderTick = Environment.TickCount + MillisBetweenProgressRender;
         }
     }
 
