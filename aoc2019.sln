@@ -15,9 +15,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2019.Puzzles", "aoc2019.Puzzles\aoc2019.Puzzles.csproj", "{A8DD6897-91CC-4955-934B-B7423D90DCD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc2019.ConsoleApp", "aoc2019.ConsoleApp\aoc2019.ConsoleApp.csproj", "{DD30F64D-BC93-4DDC-88F6-0E6E1C726B6C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2019.ConsoleApp", "aoc2019.ConsoleApp\aoc2019.ConsoleApp.csproj", "{DD30F64D-BC93-4DDC-88F6-0E6E1C726B6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aoc2019.Puzzles.Test", "aoc2019.Puzzles.Test\aoc2019.Puzzles.Test.csproj", "{5E4FFB2E-F740-4CE2-B9FD-65BEE67583BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aoc2019.Puzzles.Test", "aoc2019.Puzzles.Test\aoc2019.Puzzles.Test.csproj", "{5E4FFB2E-F740-4CE2-B9FD-65BEE67583BD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{39EF490F-1A8D-46A6-BCED-B2BF20F1814B}"
 EndProject
