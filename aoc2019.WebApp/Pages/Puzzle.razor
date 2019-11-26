@@ -1,8 +1,4 @@
-﻿@using System.Threading
-@using aoc2019.Puzzles
-@using aoc2019.WebApp.Services
-@inject ISolutionHandler SolutionHandler
-@inject IInputHandler InputHandler
+﻿@using aoc2019.Puzzles
 @page "/puzzle"
 @page "/puzzle/{day}"
 
@@ -53,11 +49,13 @@ else
                                     {
                                         var percentage = (int)Progress.Percentage;
                                         var percentageString = $"{percentage}%";
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: @percentageString" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                             style="width: @percentageString" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
                                     }
                                     else
                                     {
-                                        <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated" style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated"
+                                             style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
                                     }
                                 </div>
                                 break;
@@ -75,95 +73,15 @@ else
 
         <br />
         <TabControl>
-            <TabPage Title="Input">
+            <TabPage Name="Description" IsActive>
+                <pre>Placeholder for the puzzle description.</pre>
+            </TabPage>
+            <TabPage Name="Input">
                 <pre>@Input</pre>
             </TabPage>
-            <TabPage Title="Source">
+            <TabPage Name="Source">
                 <pre>Placeholder for the source code.</pre>
             </TabPage>
         </TabControl>
-    }
-}
-
-@code {
-    public int MillisBetweenProgressRender { get; set; } = 500;
-
-    [Parameter]
-    public string Day { get; set; }
-
-    private SolutionMetadata SolutionMetadata { get; set; }
-    private string Input { get; set; }
-    private object[] Results { get; set; }
-    private bool IsWorking { get; set; }
-    private SolutionProgress Progress { get; set; }
-
-    private CancellationTokenSource CancellationTokenSource;
-    private int ProgressRenderTick = Environment.TickCount;
-
-    protected override Task OnParametersSetAsync() => Init();
-    private void Cancel() => CancellationTokenSource?.Cancel(true);
-
-    private async Task Init()
-    {
-        Cancel();
-        SolutionMetadata = null;
-        Input = null;
-        Results = null;
-        Progress = new SolutionProgress();
-        if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
-        {
-            SolutionMetadata = solutionMetadata;
-            Input = await InputHandler.GetInputAsync(SolutionMetadata.Day);
-            Results = InputHandler.GetResults(SolutionMetadata.Day);
-        }
-    }
-
-    private async Task SolveAsync()
-    {
-        CancellationTokenSource = new CancellationTokenSource();
-        ISolution solution = null;
-        try
-        {
-            IsWorking = true;
-            InputHandler.ClearResults(SolutionMetadata.Day);
-            solution = SolutionMetadata.CreateInstance();
-            solution.CancellationToken = CancellationTokenSource.Token;
-            solution.ProgressUpdated += OnProgressUpdate;
-
-            foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1, solution.Part2 }.Select((x, i) => (x, i)))
-            {
-                Progress = new SolutionProgress();
-                StateHasChanged();
-                await Task.Delay(1);
-                Results[index] = await ExceptionToResult(part);
-            }
-        }
-        finally
-        {
-            if (solution != null) { solution.ProgressUpdated -= OnProgressUpdate; }
-            IsWorking = false;
-        }
-    }
-
-    private void OnProgressUpdate(object sender, SolutionProgressEventArgs args)
-    {
-        Progress = args.Progress;
-        if (Environment.TickCount > ProgressRenderTick)
-        {
-            StateHasChanged();
-            ProgressRenderTick = Environment.TickCount + MillisBetweenProgressRender;
-        }
-    }
-
-    private async Task<object> ExceptionToResult(Func<string, Task<string>> func)
-    {
-        try
-        {
-            return await (func(Input) ?? Task.FromResult<string>(null));
-        }
-        catch (Exception exception)
-        {
-            return exception;
-        }
     }
 }

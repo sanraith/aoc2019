@@ -1,37 +1,20 @@
-﻿<div>
+﻿@* Tab buttons *@
+<div>
     @foreach (var page in Pages)
     {
         var outlineClass = ActivePage == page ? "btn-secondary" : "btn-outline-secondary";
-        <button class="btn @outlineClass" @onclick="() => ActivatePage(page)">@(page.Title)</button>
+        <button class="btn @outlineClass" @onclick="() => ActivatePage(page)">@(page.Name)</button>
     }
 </div>
+
+@* Active page content *@
 <div>
     @ActivePage?.ChildContent
 </div>
 
-<CascadingValue Name="Parent" Value="this">
-    @ChildContent
-</CascadingValue>
-
-@code {
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
-
-    public TabPage ActivePage { get; set; }
-
-    public IReadOnlyList<TabPage> Pages => myPages;
-
-    public void RegisterPage(TabPage page)
-    {
-        myPages.Add(page);
-        if (Pages.Count == 1)
-        {
-            ActivePage = page;
-        }
-        StateHasChanged();
-    }
-
-    private void ActivatePage(TabPage page) => ActivePage = page;
-
-    private readonly List<TabPage> myPages = new List<TabPage>();
-}
+@* Child content (TabPages) is not displayed directly, but it still have to be included to use CascadingValue. *@
+<div style="display: none">
+    <CascadingValue Name="Parent" Value="this">
+        @ChildContent
+    </CascadingValue>
+</div>
