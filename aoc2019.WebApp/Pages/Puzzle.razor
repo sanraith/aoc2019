@@ -9,76 +9,92 @@
 else
 {
     <h3>Puzzle @SolutionMetadata.Day - @SolutionMetadata.Title</h3>
+    <div style="display: flex; margin-top: 1em">
+            <button style="height: 70px; width: 150px; margin-right: 1em" @onclick="SolveAsync" class="btn btn-primary" disabled="@(IsWorking || Input == null ? "disabled" : null)">
+                @if (Input == null)
+                {
+                    <span>Loading input...</span>
+                }
+                else if (IsWorking)
+                {
+                    <span>Calculating...</span>
+                }
+                else
+                {
+                    <span>Solve</span>
+                }
+            </button>
 
-    <p style="margin-bottom: 1em">
-        <button @onclick="SolveAsync" class="btn btn-primary" disabled="@(IsWorking || Input == null ? "disabled" : null)">@(IsWorking ? "Calculating..." : "Solve")</button>
-        <span style="display: @(Input == null ? "inline" : "none")">Loading input...</span>
-        <button @onclick="Cancel" class="btn btn-secondary" style="@(IsWorking || Input == null  ? null : "display:none")">Cancel</button>
-    </p>
+        <div style="margin-right: 1em">
+            @{var isProgressBarRendered = false;}
+            @foreach (var (result, number) in Results.Select((x, i) => (x, i + 1)))
+            {
+                <table style="border:0">
+                    <tr style="height: 35px">
+                        <td style="vertical-align: middle; padding-right: 1em">Part @(number):</td>
+                        <td style="vertical-align: middle;">
+                            @switch (result)
+                            {
+                                case string text:
+                                    <input name="part@(number)result" type="text" readonly value="@result" />
+                                    break;
+                                case TaskCanceledException _:
+                                    <span>Canceled.</span>
+                                    break;
+                                case NotImplementedException _:
+                                    <span>Not implemented.</span>
+                                    break;
+                                case Exception exception:
+                                    <span>Error - @exception</span>
+                                    break;
+                                case null when IsWorking && !isProgressBarRendered:
+                                    isProgressBarRendered = true;
+                                    <div class="progress" style="width: 200px; height: 2em">
+                                        @if (Progress.Percentage > 0)
+                                        {
+                                            var percentage = (int)Progress.Percentage;
+                                            var percentageString = $"{percentage}%";
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                                                 style="width: @percentageString" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        }
+                                        else
+                                        {
+                                            <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated"
+                                                 style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
+                                        }
+                                    </div>
+                                    break;
+                                case null when IsWorking && isProgressBarRendered:
+                                    <span>Waiting...</span>
+                                    break;
+                                default:
+                                    <span>no result.</span>
+                                    break;
+                            }
+                        </td>
+                    </tr>
+                </table>
+            }
+        </div>
+        <div style="height: 35px; width: 100px; margin-right: 1em">
+            <button @onclick="Cancel" class="btn btn-secondary" style="width: 100%; height: 100%; @(IsWorking ? null : "display:none")">Cancel</button>
+        </div>
+    </div>
 
-    var isProgressBarRendered = false;
-    foreach (var (result, number) in Results.Select((x, i) => (x, i + 1)))
-    {
-        <table style="border:0">
-            <tr>
-                <td style="vertical-align: middle; padding-right: 1em">Part @(number):</td>
-                <td style="vertical-align: middle;">
-                    @switch (result)
-                    {
-                        case string text:
-                            <input name="part@(number)result" type="text" readonly value="@result" />
-                            break;
-                        case TaskCanceledException _:
-                            <span>Canceled.</span>
-                            break;
-                        case NotImplementedException _:
-                            <span>Not implemented.</span>
-                            break;
-                        case Exception exception:
-                            <span>Error - @exception</span>
-                            break;
-                        case null when IsWorking && !isProgressBarRendered:
-                            isProgressBarRendered = true;
-                            <div class="progress" style="width: 200px; height: 2em">
-                                @if (Progress.Percentage > 0)
-                                {
-                                    var percentage = (int)Progress.Percentage;
-                                    var percentageString = $"{percentage}%";
-                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                         style="width: @percentageString" aria-valuenow="@percentage" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
-                                }
-                                else
-                                {
-                                    <div class="progress-bar progress-bar-striped bg-warning progress-bar-animated"
-                                         style="width: 100%" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Calculating...</div>
-                                }
-                            </div>
-                            break;
-                        case null when IsWorking && isProgressBarRendered:
-                            <span>Waiting...</span>
-                            break;
-                        default:
-                            <span>no result.</span>
-                            break;
-                    }
-                </td>
-            </tr>
-        </table>
-    }
-
-    <br />
-    <TabControl>
-        <TabPage Name="Description" IsActive>
-            <div style="margin-top: 2em; font-size: 12px">Source: <a href="https://adventofcode.com/2019/day/@(SolutionMetadata.Day)">Advent of Code</a></div>
-            <div style="font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">
-                @((MarkupString)Description)
-            </div>
-        </TabPage>
-        <TabPage Name="Input">
-            <pre>@Input</pre>
-        </TabPage>
-        <TabPage Name="Source">
-            <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">@SourceCode</pre>
-        </TabPage>
-    </TabControl>
+    <div style="margin-top: 4em">
+        <TabControl>
+            <TabPage Name="Description" IsActive>
+                <div style="margin-top: 2em; font-size: 12px">Source: <a href="https://adventofcode.com/2019/day/@(SolutionMetadata.Day)">Advent of Code</a></div>
+                <div style="font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">
+                    @((MarkupString)Description)
+                </div>
+            </TabPage>
+            <TabPage Name="Input">
+                <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@Input</pre>
+            </TabPage>
+            <TabPage Name="Source">
+                <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">@SourceCode</pre>
+            </TabPage>
+        </TabControl>
+    </div>
 }

@@ -7,6 +7,8 @@ namespace aoc2019.WebApp.Services
 {
     public interface IInputHandler
     {
+        bool IsCachedInputAvailable(int day);
+
         Task<string> GetInputAsync(int day);
 
         Task<string> GetDescriptionAsync(int day);
@@ -24,6 +26,8 @@ namespace aoc2019.WebApp.Services
         {
             myHttpClient = httpClient;
         }
+
+        public bool IsCachedInputAvailable(int day) => myInputCache.ContainsKey(day);
 
         public async Task<string> GetInputAsync(int day)
         {

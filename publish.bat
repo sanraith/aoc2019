@@ -2,6 +2,8 @@
 SETLOCAL EnableDelayedExpansion
 
 REM ***
+REM Publishes aoc2019.WebApp for github pages.
+REM
 REM - Publish the aoc2019.WebApp project
 REM - Clean /docs/** directories
 REM - Copy all published files and directories to /docs/

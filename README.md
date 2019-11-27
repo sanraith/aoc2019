@@ -5,9 +5,9 @@ Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2
 # Project structure
 | Folder    						| Description
 | ---								| ---
+| <code>aoc2019.ConsoleApp</code>	| Console application to run the puzzle solutions.
 | <code>aoc2019.Puzzles</code>		| Inputs and solutions for the Advent of Code puzzles.
 | <code>aoc2019.Puzzles.Test</code>	| Unit tests for the solutions.
-| <code>aoc2019.ConsoleApp</code>	| Console application to run the puzzle solutions.
 | <code>aoc2019.WebApp</code>		| Blazor WebAssembly application to run the puzzle solutions within a WebAssembly-compatible browser.
 | <code>docs</code>					| The published version of <code>aoc2019.WebApp</code>. Available at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/).
 

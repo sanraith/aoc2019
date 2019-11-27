@@ -1,9 +1,9 @@
 ﻿@* Tab buttons *@
-<div>
+<div class="nav nav-tabs">
     @foreach (var page in Pages)
     {
-        var outlineClass = ActivePage == page ? "btn-secondary" : "btn-outline-secondary";
-        <button class="btn @outlineClass" @onclick="() => ActivatePage(page)">@(page.Name)</button>
+        var outlineClass = ActivePage == page ? "active" : "";
+        <button class="nav-item nav-link @outlineClass" @onclick="() => ActivatePage(page)">@(page.Name)</button>
     }
 </div>
 
