@@ -2,4 +2,6 @@
 Properties/PublishProfiles/
 
 # Copied input files from aoc2019.Puzzles
+wwwroot/description/
 wwwroot/input/
+wwwroot/source/

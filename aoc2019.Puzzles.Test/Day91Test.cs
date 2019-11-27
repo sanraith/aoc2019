@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace aoc2019.Puzzles.Test
 {
     [TestFixture]
-    public sealed class Day01Test : TestBase<Day01>
+    public sealed class Day91Test : TestBase<Day91>
     {
         [Test]
         public void Part1()

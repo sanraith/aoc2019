@@ -24,13 +24,15 @@ namespace aoc2019.WebApp.Pages
 
         private SolutionMetadata SolutionMetadata { get; set; }
         private string Input { get; set; }
+        private string Description { get; set; }
+        private string SourceCode { get; set; }
         private object[] Results { get; set; }
         private bool IsWorking { get; set; }
         private SolutionProgress Progress { get; set; }
 
-        protected override Task OnParametersSetAsync() => Init();
+        protected override void OnParametersSet() => Init();
 
-        private async Task Init()
+        private void Init()
         {
             Cancel();
             SolutionMetadata = null;
@@ -40,12 +42,32 @@ namespace aoc2019.WebApp.Pages
             if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
             {
                 SolutionMetadata = solutionMetadata;
-                Input = await InputHandler.GetInputAsync(SolutionMetadata.Day);
                 Results = InputHandler.GetResults(SolutionMetadata.Day);
+                Input = null;
+                Description = "Loading description...";
+                LoadPuzzleMetadataInBackground();
             }
         }
 
-        private void Cancel() => myCancellationTokenSource?.Cancel(true);
+        private void LoadPuzzleMetadataInBackground()
+        {
+            myCancellationTokenSource = new CancellationTokenSource();
+            Task.Run(async () =>
+            {
+                Input = await InputHandler.GetInputAsync(SolutionMetadata.Day);
+                StateHasChanged();
+            }, myCancellationTokenSource.Token);
+            Task.Run(async () =>
+            {
+                Description = await InputHandler.GetDescriptionAsync(SolutionMetadata.Day);
+                StateHasChanged();
+            }, myCancellationTokenSource.Token);
+            Task.Run(async () =>
+            {
+                SourceCode = await InputHandler.GetSourceCodeAsync(SolutionMetadata.Day);
+                StateHasChanged();
+            }, myCancellationTokenSource.Token);
+        }
 
         private async Task SolveAsync()
         {
@@ -73,6 +95,8 @@ namespace aoc2019.WebApp.Pages
                 IsWorking = false;
             }
         }
+
+        private void Cancel() => myCancellationTokenSource?.Cancel(true);
 
         private void OnProgressUpdate(object sender, SolutionProgressEventArgs args)
         {

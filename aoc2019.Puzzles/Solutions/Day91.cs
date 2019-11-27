@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Solutions
 {
-    [Puzzle("First puzzle")]
-    public sealed class Day01 : SolutionBase
+    [Puzzle("First test puzzle")]
+    public sealed class Day91 : SolutionBase
     {
         public override async Task<string> Part1(string input)
         {

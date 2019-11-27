@@ -40,6 +40,15 @@
                 </NavLink>
             </li>
         }
+        @foreach (var solution in SolutionHandler.Solutions.Where(kvp => kvp.Key < 1 || kvp.Key > 25).Select(x => x.Value))
+        {
+            var href = $"puzzle/{solution.Day}";
+            <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">
+                <NavLink AdditionalAttributes='new Dictionary<string, object>(){ { "class", "nav-link" },{"href", href },{ "style", "display:block; line-height: 1; height:auto; padding-top: 4px; padding-bottom: 4px" } }'>
+                    <span>Day @solution.Day</span> <span class="small"> - @solution.Title</span>
+                </NavLink>
+            </li>
+        }
     </ul>
 </div>
 
