@@ -3,10 +3,24 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>2f9f2035-d8fb-4797-b44b-faafc475ab84</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.17" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\aoc2019.Puzzles\aoc2019.Puzzles.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
