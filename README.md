@@ -1,4 +1,4 @@
-# Advent of Code 2019 solutions [![](https://github.com/sanraith/aoc2019/workflows/.NET%20Core/badge.svg)](https://github.com/sanraith/aoc2019/actions)
+# Advent of Code 2019 C# Blazor solutions [![](https://github.com/sanraith/aoc2019/workflows/.NET%20Core/badge.svg)](https://github.com/sanraith/aoc2019/actions)
 Solutions for [Advent of Code 2019](https://adventofcode.com/2019) in C# with a Blazor WebAssembly runner.  
 Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/)
 
@@ -14,8 +14,13 @@ Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2
 # Build and run
 Make sure <code>.NET Core SDK 3.1.100-preview3-014645</code> or later is installed.  
 - <code>dotnet build</code>
-- Blazor runner:
+- Run the Blazor WebAssembly application:
     - <code>dotnet run --project aoc2019.WebApp</code>
     - Open <code>http://localhost:52016/</code>
-- Console runner:
-    - <code>dotnet run --project aoc2019.ConsoleApp -d **[number of day]**</code>
+- Run the last puzzle solution in console:
+    - <code>dotnet run --project aoc2019.ConsoleApp --last</code>
+- Run a puzzle solution in console:
+    - <code>dotnet run --project aoc2019.ConsoleApp --day **[number of day]**</code>
+- Create source, test, input and description files for a puzzle:
+    - Set your [adventofcode.com]() session cookie in <code>aoc2019.ConsoleApp\\appsettings.json\\SessionCookie</code>, or as a user secret.
+    - <code>dotnet run --project aoc2019.ConsoleApp --setup **[number of day]**</code>

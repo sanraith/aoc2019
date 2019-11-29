@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "aoc2019.ConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--last"
+    }
+  }
+}

@@ -19,6 +19,9 @@ namespace aoc2019.ConsoleApp
     {
         private sealed class Options
         {
+            [Option('l', "last", HelpText = "Run the last available solution.")]
+            public bool RunLastDay { get; set; }
+
             [Option('d', "day", HelpText = "[Number of day] Run the solution for the given day.")]
             public int? DayToRun { get; set; }
 
@@ -28,6 +31,7 @@ namespace aoc2019.ConsoleApp
             [Usage(ApplicationAlias = "aoc2019.ConsoleApp")]
             public static IEnumerable<Example> Examples => new Example[]
             {
+                new Example("Run the last available solution", new Options { RunLastDay = true }),
                 new Example("Run solution for day 12", new UnParserSettings{ PreferShortName = true }, new Options { DayToRun = 12 }),
                 new Example("Add input and description for day 23 to aoc2019.Puzzles along with an empty solution .cs file", new Options { DayToSetup = 23 }),
             };
@@ -41,12 +45,17 @@ namespace aoc2019.ConsoleApp
             Parser.Default.ParseArguments<Options>(args).WithParsed(o => options = o);
             myConfig = Configuration.Load();
             myOptions = options;
+            mySolutionHandler = new SolutionHandler();
         }
 
         public async Task Run()
         {
             if (myOptions == null) { return; }
 
+            if (myOptions.RunLastDay)
+            {
+                await SolveLastDay();
+            }
             if (myOptions.DayToRun.HasValue)
             {
                 await SolveDay(myOptions.DayToRun.Value);
@@ -57,24 +66,54 @@ namespace aoc2019.ConsoleApp
             }
         }
 
+        private async Task SolveLastDay()
+        {
+            var lastSolutionDay = mySolutionHandler.Solutions.Keys.LastOrDefault(x => x >= 1 && x <= 25);
+            if (lastSolutionDay > 0)
+            {
+                await SolveDay(lastSolutionDay);
+            }
+            else
+            {
+                Console.WriteLine("No solution is available yet.");
+            }
+        }
+
         private async Task SolveDay(int day)
         {
-            var solutionHandler = new SolutionHandler();
-            var solution = solutionHandler.Solutions[day].CreateInstance();
+            var solution = mySolutionHandler.Solutions[day].CreateInstance();
 
             var dayString = day.ToString().PadLeft(2, '0');
             var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var input = File.ReadAllText(Path.Combine(rootDir, "Input", $"day{dayString}.txt"));
 
             Console.WriteLine($"Solving {day}...");
-            Console.WriteLine($"Part 1: {await solution.Part1(input)}");
-            Console.WriteLine($"Part 2: {await solution.Part2(input)}");
+            await SolvePart(1, input, solution.Part1);
+            await SolvePart(2, input, solution.Part2);
+        }
+
+        private static async Task SolvePart(int partNumber, string input, Func<string, Task<string>> action)
+        {
+            try
+            {
+                Console.Write($"Part {partNumber}: ");
+                Console.WriteLine(await action(input));
+            }
+            catch (NotImplementedException)
+            {
+                Console.WriteLine("Not implemented.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
         }
 
         private async Task SetupDay(int day)
         {
             var dayString = day.ToString().PadLeft(2, '0');
-            var puzzleProjectPath = myConfig.PuzzleProjectPath ?? Path.Combine("..", "aoc2019.Puzzles");
+            var consoleProjectBinPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var puzzleProjectPath = Path.Combine(consoleProjectBinPath, myConfig.PuzzleProjectPath);
             Console.WriteLine($"Setting up input and description for {myConfig.Year}/12/{dayString}...");
 
             var cookieContainer = new CookieContainer();
@@ -84,7 +123,7 @@ namespace aoc2019.ConsoleApp
 
             await SaveInputAsync(day, dayString, puzzleProjectPath, httpClient);
             string puzzleTitle = await SaveDescriptionAsync(day, dayString, puzzleProjectPath, httpClient);
-            await CreateSolutionSourceAsync(day, dayString, puzzleProjectPath, puzzleTitle);
+            await CreateSolutionSourceAsync(day, dayString, consoleProjectBinPath, puzzleProjectPath, puzzleTitle);
 
             Console.WriteLine("Done.");
         }
@@ -124,9 +163,8 @@ namespace aoc2019.ConsoleApp
             return puzzleTitle;
         }
 
-        private static async Task CreateSolutionSourceAsync(int day, string dayString, string puzzleProjectPath, string puzzleTitle)
+        private static async Task CreateSolutionSourceAsync(int day, string dayString, string consoleProjectBinPath, string puzzleProjectPath, string puzzleTitle)
         {
-            var consoleProjectBinPath = GetApplicationRoot();
             var solutionSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_.cs"));
             var solutionTargetFile = new FileInfo(Path.Combine(puzzleProjectPath, "Solutions", $"Day{dayString}.cs"));
             var testSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_Test.cs"));
@@ -161,15 +199,8 @@ namespace aoc2019.ConsoleApp
             }
         }
 
-        private static string GetApplicationRoot()
-        {
-            var exePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            Regex appPathMatcher = new Regex(@"(?<!fil)[A-Za-z]:\\+[\S\s]*?(?=\\+bin)");
-            var appRoot = appPathMatcher.Match(exePath).Value;
-            return appRoot;
-        }
-
         private readonly Options myOptions;
         private readonly Configuration myConfig;
+        private readonly SolutionHandler mySolutionHandler;
     }
 }
