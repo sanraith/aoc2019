@@ -129,6 +129,9 @@ namespace aoc2019.ConsoleApp
             var consoleProjectBinPath = GetApplicationRoot();
             var solutionSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_.cs"));
             var solutionTargetFile = new FileInfo(Path.Combine(puzzleProjectPath, "Solutions", $"Day{dayString}.cs"));
+            var testSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_Test.cs"));
+            var testTargetFile = new FileInfo(Path.Combine($"{puzzleProjectPath}.Test", $"Day{dayString}Test.cs"));
+
             if (solutionTargetFile.Exists)
             {
                 Console.WriteLine($"Source file already exists at {solutionTargetFile.FullName}");
@@ -136,12 +139,25 @@ namespace aoc2019.ConsoleApp
             else
             {
                 Console.WriteLine($"Saving source file to {solutionTargetFile.FullName}");
-                var content = await File.ReadAllTextAsync(solutionSourceFile.FullName);
-                content = content
+                var sourceContent = await File.ReadAllTextAsync(solutionSourceFile.FullName);
+                sourceContent = sourceContent
                     .Replace("_DAYNUMBER_", day.ToString())
                     .Replace("_DAYSTRING_", dayString)
                     .Replace("_PUZZLETITLE_", puzzleTitle);
-                await File.WriteAllTextAsync(solutionTargetFile.FullName, content, Encoding.UTF8);
+                await File.WriteAllTextAsync(solutionTargetFile.FullName, sourceContent, Encoding.UTF8);
+            }
+
+            if (testTargetFile.Exists)
+            {
+                Console.WriteLine($"Test file already exists at {solutionTargetFile.FullName}");
+            }
+            else
+            {
+
+                Console.WriteLine($"Saving test file to {testTargetFile.FullName}");
+                var testContent = await File.ReadAllTextAsync(testSourceFile.FullName);
+                testContent = testContent.Replace("_DAYSTRING_", dayString);
+                await File.WriteAllTextAsync(testTargetFile.FullName, testContent, Encoding.UTF8);
             }
         }
 

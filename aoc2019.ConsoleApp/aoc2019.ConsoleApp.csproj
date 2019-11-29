@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Template\Day_DAYSTRING_.cs" />
+    <Compile Remove="Template\*.cs" />
+    <None Include="Template\*.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Template\Day_DAYSTRING_.cs">
+    <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -25,12 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\aoc2019.Puzzles\aoc2019.Puzzles.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
