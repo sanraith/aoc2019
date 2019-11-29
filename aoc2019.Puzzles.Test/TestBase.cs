@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 
 namespace aoc2019.Puzzles.Test
 {
@@ -6,7 +7,8 @@ namespace aoc2019.Puzzles.Test
     {
         protected TSolution Solution { get; private set; }
 
-        protected TestBase()
+        [SetUp]
+        protected virtual void SetUp()
         {
             Solution = Activator.CreateInstance<TSolution>();
         }
