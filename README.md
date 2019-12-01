@@ -16,7 +16,7 @@ Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2
 # Build and run
 Make sure <code>.NET Core SDK 3.1.100-preview3-014645</code> or later is installed.  
 Clone and build the solution:
-- <code>git clone https://sanraith.github.io/aoc2019.git</code>
+- <code>git clone https://github.com/sanraith/aoc2019</code>
 - <code>cd aoc2019</code>
 - <code>dotnet build</code>
 
