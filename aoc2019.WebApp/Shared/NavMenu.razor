@@ -15,12 +15,6 @@
                 <span class="oi oi-home" aria-hidden="true"></span> Home
             </NavLink>
         </li>
-        @*<li class="nav-item px-3">
-                <NavLink class="nav-link" href="fetchdata">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-                </NavLink>
-            </li>*@
-
         @foreach (var day in Enumerable.Range(1, 25))
         {
             var smallText = "";
@@ -30,26 +24,18 @@
             {
                 smallText = $" - {solution.Title}";
                 iconClass = "oi-circle-check";
+                <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">
+                    <NavLink AdditionalAttributes='new Dictionary<string, object>(){ { "class", "nav-link" },{"href", href },{ "style", "display:block; line-height: 1; height:auto; padding-top: 4px; padding-bottom: 4px" } }'>
+                        <span>
+                            <span class="oi @iconClass" aria-hidden="true" style="margin-right: -4px"></span>
+                            Day @day
+                        </span><span class="small">@smallText</span>
+                    </NavLink>
+                </li>
             }
-            <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">
-                <NavLink AdditionalAttributes='new Dictionary<string, object>(){ { "class", "nav-link" },{"href", href },{ "style", "display:block; line-height: 1; height:auto; padding-top: 4px; padding-bottom: 4px" } }'>
-                    <span>
-                        <span class="oi @iconClass" aria-hidden="true" style="margin-right: -4px"></span>
-                        Day @day
-                    </span><span class="small">@smallText</span>
-                </NavLink>
-            </li>
-        }
-        @foreach (var solution in SolutionHandler.Solutions.Where(kvp => kvp.Key < 1 || kvp.Key > 25).Select(x => x.Value))
-        {
-            var href = $"puzzle/{solution.Day}";
-            <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">
-                <NavLink AdditionalAttributes='new Dictionary<string, object>(){ { "class", "nav-link" },{"href", href },{ "style", "display:block; line-height: 1; height:auto; padding-top: 4px; padding-bottom: 4px" } }'>
-                    <span>Day @solution.Day</span> <span class="small"> - @solution.Title</span>
-                </NavLink>
-            </li>
         }
     </ul>
+    <p style="margin-bottom: 1em;">&nbsp;</p>
 </div>
 
 @code {

@@ -4,11 +4,11 @@
 
 @if (SolutionMetadata == null)
 {
-    <h3>Puzzle @Day (no solution available)</h3>
+    <h3>Day @Day (no solution available)</h3>
 }
 else
 {
-    <h3>Puzzle @SolutionMetadata.Day - @SolutionMetadata.Title</h3>
+    <h3>Day @SolutionMetadata.Day - @SolutionMetadata.Title</h3>
     <div style="display: flex; margin-top: 1em">
             <button style="height: 70px; width: 150px; margin-right: 1em" @onclick="SolveAsync" class="btn btn-primary" disabled="@(IsWorking || Input == null ? "disabled" : null)">
                 @if (Input == null)
@@ -81,7 +81,7 @@ else
         </div>
     </div>
 
-    <div style="margin-top: 4em">
+    <div style="margin-top: 4em; margin-bottom: 4em;">
         <TabControl>
             <TabPage Name="Description" IsActive>
                 <div style="margin-top: 2em; font-size: 12px">Source: <a href="https://adventofcode.com/2019/day/@(SolutionMetadata.Day)">Advent of Code</a></div>
@@ -93,7 +93,7 @@ else
                 <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@Input</pre>
             </TabPage>
             <TabPage Name="Source">
-                <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">@SourceCode</pre>
+                <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@SourceCode</pre>
             </TabPage>
         </TabControl>
     </div>

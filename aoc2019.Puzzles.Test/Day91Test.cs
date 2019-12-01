@@ -1,5 +1,6 @@
 using aoc2019.Puzzles.Solutions;
 using NUnit.Framework;
+using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Test
 {
@@ -7,15 +8,15 @@ namespace aoc2019.Puzzles.Test
     public sealed class Day91Test : TestBase<Day91>
     {
         [Test]
-        public void Part1()
+        public async Task Part1()
         {
-            Assert.That(Solution.Part1("hello"), Is.Not.Null);
+            Assert.That(await Solution.Part1("hello"), Is.Not.Null);
         }
 
         [Test]
-        public void Part2()
+        public async Task Part2()
         {
-            Assert.That(Solution.Part2("hello"), Is.Not.Null);
+            Assert.That(await Solution.Part2("hello"), Is.Not.Null);
         }
     }
 }
