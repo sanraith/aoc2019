@@ -1,4 +1,4 @@
-﻿using aoc2019.Puzzles;
+﻿using aoc2019.Puzzles.Core;
 using aoc2019.WebApp.Services;
 using Microsoft.AspNetCore.Components;
 using System;

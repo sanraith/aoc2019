@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace aoc2019.Puzzles
+﻿
+namespace aoc2019.Puzzles.Core
 {
     public class SolutionProgress
     {

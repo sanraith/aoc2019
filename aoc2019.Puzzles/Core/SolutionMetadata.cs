@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace aoc2019.Puzzles
+namespace aoc2019.Puzzles.Core
 {
     public sealed class SolutionMetadata
     {

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using aoc2019.Puzzles.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Solutions
 {

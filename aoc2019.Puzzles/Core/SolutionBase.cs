@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace aoc2019.Puzzles
+namespace aoc2019.Puzzles.Core
 {
     public abstract class SolutionBase : ISolution
     {
@@ -31,9 +31,12 @@ namespace aoc2019.Puzzles
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected bool IsUpdateProgressNeeded() => Environment.TickCount >= myUpdateTick;
 
-        protected Task UpdateProgressAsync(double current, double max)
+        /// <summary>
+        /// Updates the UI of the solution runner with the current progress, and schedules the next update a couple of milliseconds in the future.
+        /// </summary>
+        protected Task UpdateProgressAsync(double current, double total)
         {
-            Progress.Percentage = (current / max) * 100;
+            Progress.Percentage = current / Math.Max(total, double.Epsilon) * 100;
             return UpdateProgressAsync();
         }
 

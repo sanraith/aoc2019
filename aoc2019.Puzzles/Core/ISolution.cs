@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace aoc2019.Puzzles
+namespace aoc2019.Puzzles.Core
 {
     public interface ISolution
     {

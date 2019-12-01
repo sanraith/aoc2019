@@ -1,5 +1,4 @@
-﻿using aoc2019.Puzzles;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -12,6 +11,7 @@ using CommandLine;
 using CommandLine.Text;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
+using aoc2019.Puzzles.Core;
 
 namespace aoc2019.ConsoleApp
 {
