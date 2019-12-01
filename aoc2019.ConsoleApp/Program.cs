@@ -88,8 +88,8 @@ namespace aoc2019.ConsoleApp
             var input = File.ReadAllText(Path.Combine(rootDir, "Input", $"day{dayString}.txt"));
 
             Console.WriteLine($"Solving {day}...");
-            await SolvePart(1, input, solution.Part1);
-            await SolvePart(2, input, solution.Part2);
+            await SolvePart(1, input, solution.Part1Async);
+            await SolvePart(2, input, solution.Part2Async);
         }
 
         private static async Task SolvePart(int partNumber, string input, Func<string, Task<string>> action)

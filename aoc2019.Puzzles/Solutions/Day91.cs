@@ -8,7 +8,7 @@ namespace aoc2019.Puzzles.Solutions
     [Puzzle("First test puzzle")]
     public sealed class Day91 : SolutionBase
     {
-        public override async Task<string> Part1(string input)
+        public override async Task<string> Part1Async(string input)
         {
             var sum = 0;
             var mainSw = Stopwatch.StartNew();
@@ -24,7 +24,7 @@ namespace aoc2019.Puzzles.Solutions
             return mainSw.ElapsedMilliseconds.ToString();
         }
 
-        public override async Task<string> Part2(string input)
+        public override async Task<string> Part2Async(string input)
         {
             await UpdateProgressAsync();
             var sum = 0;

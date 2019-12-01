@@ -8,12 +8,12 @@ namespace aoc2019.Puzzles.Solutions
     [Puzzle("The Tyranny of the Rocket Equation")]
     public sealed class Day01 : SolutionBase
     {
-        public override async Task<string> Part1(string input)
+        public override string Part1(string input)
         {
             return GetModules(input).Sum(mass => mass / 3 - 2).ToString();
         }
 
-        public override async Task<string> Part2(string input)
+        public override string Part2(string input)
         {
             return GetModules(input).Sum(mass =>
             {

@@ -34,6 +34,8 @@ namespace aoc2019.WebApp.Pages
 
         private bool IsWorking { get; set; }
 
+        private bool HasInputChanged { get; set; }
+
         private SolutionProgress Progress { get; set; }
 
         protected override Task OnParametersSetAsync() => InitAsync();
@@ -43,13 +45,14 @@ namespace aoc2019.WebApp.Pages
             Cancel();
             SolutionMetadata = null;
             Input = null;
+            HasInputChanged = false;
             Results = null;
             Progress = new SolutionProgress();
             if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
             {
                 SolutionMetadata = solutionMetadata;
                 Results = InputHandler.GetResults(SolutionMetadata.Day);
-                Input = InputHandler.IsCachedInputAvailable(solutionMetadata.Day) ? await InputHandler.GetInputAsync(SolutionMetadata.Day) : null;
+                if (InputHandler.IsCachedInputAvailable(solutionMetadata.Day)) { await LoadInputAsync(); }
                 Description = "Loading description...";
                 LoadPuzzleMetadataInBackground();
             }
@@ -58,11 +61,7 @@ namespace aoc2019.WebApp.Pages
         private void LoadPuzzleMetadataInBackground()
         {
             myCancellationTokenSource = new CancellationTokenSource();
-            Task.Run(async () =>
-            {
-                Input = Input ?? await InputHandler.GetInputAsync(SolutionMetadata.Day);
-                StateHasChanged();
-            }, myCancellationTokenSource.Token);
+            Task.Run(() => LoadInputAsync(), myCancellationTokenSource.Token);
             Task.Run(async () =>
             {
                 Description = await InputHandler.GetDescriptionAsync(SolutionMetadata.Day);
@@ -73,6 +72,14 @@ namespace aoc2019.WebApp.Pages
                 SourceCode = await InputHandler.GetSourceCodeAsync(SolutionMetadata.Day);
                 StateHasChanged();
             }, myCancellationTokenSource.Token);
+        }
+
+        private async Task LoadInputAsync(bool forceReload = false)
+        {
+            Input = forceReload ? null : Input;
+            Input = Input ?? await InputHandler.GetInputAsync(SolutionMetadata.Day);
+            HasInputChanged = false;
+            StateHasChanged();
         }
 
         private async Task SolveAsync()
@@ -87,7 +94,7 @@ namespace aoc2019.WebApp.Pages
                 solution.CancellationToken = myCancellationTokenSource.Token;
                 solution.ProgressUpdated += OnProgressUpdate;
 
-                foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1, solution.Part2 }.Select((x, i) => (x, i)))
+                foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1Async, solution.Part2Async }.Select((x, i) => (x, i)))
                 {
                     Progress = new SolutionProgress();
                     StateHasChanged();

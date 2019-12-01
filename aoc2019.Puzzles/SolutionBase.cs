@@ -15,9 +15,13 @@ namespace aoc2019.Puzzles
 
         public CancellationToken CancellationToken { get; set; }
 
-        public abstract Task<string> Part1(string input);
+        public virtual string Part1(string input) => throw new NotImplementedException();
 
-        public virtual Task<string> Part2(string input) => throw new NotImplementedException();
+        public virtual string Part2(string input) => throw new NotImplementedException();
+
+        public virtual Task<string> Part1Async(string input) => Task.FromResult(Part1(input));
+
+        public virtual Task<string> Part2Async(string input) => Task.FromResult(Part2(input));
 
         protected virtual SolutionProgress Progress { get; set; } = new SolutionProgress();
 

@@ -10,20 +10,20 @@ else
 {
     <h3>Day @SolutionMetadata.Day - @SolutionMetadata.Title</h3>
     <div style="display: flex; margin-top: 1em">
-            <button style="height: 70px; width: 150px; margin-right: 1em" @onclick="SolveAsync" class="btn btn-primary" disabled="@(IsWorking || Input == null ? "disabled" : null)">
-                @if (Input == null)
-                {
-                    <span>Loading input...</span>
-                }
-                else if (IsWorking)
-                {
-                    <span>Calculating...</span>
-                }
-                else
-                {
-                    <span>Solve</span>
-                }
-            </button>
+        <button style="height: 70px; width: 150px; margin-right: 1em" @onclick="SolveAsync" class="btn btn-primary" disabled="@(IsWorking || Input == null ? "disabled" : null)">
+            @if (Input == null)
+            {
+                <span>Loading input...</span>
+            }
+            else if (IsWorking)
+            {
+                <span>Calculating...</span>
+            }
+            else
+            {
+                <span>Solve</span>
+            }
+        </button>
 
         <div style="margin-right: 1em">
             @{var isProgressBarRendered = false;}
@@ -45,7 +45,7 @@ else
                                     <span>Not implemented.</span>
                                     break;
                                 case Exception exception:
-                                    <span>Error - @exception</span>
+                                    <span>Error - @exception.Message (@exception.GetType().Name)</span>
                                     break;
                                 case null when IsWorking && !isProgressBarRendered:
                                     isProgressBarRendered = true;
@@ -90,7 +90,18 @@ else
                 </div>
             </TabPage>
             <TabPage Name="Input">
-                <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@Input</pre>
+                <div style="margin-top: 2em;">&nbsp;</div>
+                @if (HasInputChanged)
+                {
+                    <button class="btn btn-outline-primary" @onclick="async () => await LoadInputAsync(true)" style="margin-bottom: 1em;" disabled="@(IsWorking ? "disabled" : null)">
+                        Restore original input
+                    </button>
+                }
+                <textarea @bind="@Input" @oninput="(e) => { Input = (string)(e.Value); HasInputChanged = true; }"
+                          disabled="@(IsWorking ? "disabled" : null)"
+                          placeholder="Enter your puzzle input here."
+                          rows="@(Input?.Split('\n').Length)"
+                          style="box-sizing: border-box; width: 100%; font-family: 'Source Code Pro', monospace; font-size: 14px;" />
             </TabPage>
             <TabPage Name="Source">
                 <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@SourceCode</pre>
