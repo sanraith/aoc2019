@@ -90,7 +90,7 @@ else
                 </div>
             </TabPage>
             <TabPage Name="Input">
-                <div style="margin-top: 2em;">&nbsp;</div>
+                <div style="margin-top: 1em;">&nbsp;</div>
                 @if (HasInputChanged)
                 {
                     <button class="btn btn-outline-primary" @onclick="async () => await LoadInputAsync(true)" style="margin-bottom: 1em;" disabled="@(IsWorking ? "disabled" : null)">
