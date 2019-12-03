@@ -3,7 +3,7 @@
     @foreach (var page in Pages)
     {
         var outlineClass = ActivePage == page ? "active" : "";
-        <button class="nav-item nav-link @outlineClass" @onclick="() => ActivatePage(page)">@(page.Name)</button>
+        <button class="nav-item nav-link @outlineClass" @onclick="() => ActivatePage(page)" disabled="@(page.IsEnabled ? null : "disabled")">@(page.Name)</button>
     }
 </div>
 

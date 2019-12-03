@@ -20,6 +20,12 @@ namespace aoc2019.WebApp.Shared
         public bool IsActive { get; set; }
 
         /// <summary>
+        /// True if the user is allowed to activate the page.
+        /// </summary>
+        [Parameter]
+        public bool IsEnabled { get; set; } = true;
+
+        /// <summary>
         /// The content of the page.
         /// </summary>
         [Parameter]

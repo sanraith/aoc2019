@@ -11,6 +11,7 @@ namespace aoc2019.WebApp
         {
             services.AddSingleton<ISolutionHandler, SolutionHandler>();
             services.AddSingleton<IInputHandler, InputHandler>();
+            services.AddSingleton<IVisualizerHandler, VisualizerHandler>();
         }
 
         public void Configure(IComponentsApplicationBuilder app)

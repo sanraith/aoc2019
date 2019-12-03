@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace aoc2019.WebApp.Shared
 {
@@ -39,6 +40,15 @@ namespace aoc2019.WebApp.Shared
         {
             myPages.Add(page);
             StateHasChanged();
+        }
+
+        protected override void OnParametersSet()
+        {
+            if (ActivePage != null && !ActivePage.IsEnabled)
+            {
+                var firstEnabledPage = Pages.FirstOrDefault(x => x.IsEnabled);
+                ActivatePage(firstEnabledPage);
+            }
         }
 
         private readonly List<TabPage> myPages = new List<TabPage>();
