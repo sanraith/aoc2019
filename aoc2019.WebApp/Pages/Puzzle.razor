@@ -99,8 +99,8 @@ else
                 <textarea @bind="@Input" @oninput="(e) => { Input = (string)(e.Value); HasInputChanged = true; }"
                           disabled="@(IsWorking ? "disabled" : null)"
                           placeholder="Enter your puzzle input here."
-                          rows="@(Input?.Split('\n').Length)"
-                          style="box-sizing: border-box; width: 100%; font-family: 'Source Code Pro', monospace; font-size: 14px;" />
+                          rows="@(Input?.Split('\n').Length + 1)"
+                          style="box-sizing: border-box; width: 100%; white-space: nowrap; overflow: auto; font-family: 'Source Code Pro', monospace; font-size: 14px;" />
             </TabPage>
             <TabPage Name="Source">
                 <pre style="margin-top: 2em; font-family: 'Source Code Pro', monospace; font-size: 14px;">@SourceCode</pre>

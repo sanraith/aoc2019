@@ -80,10 +80,8 @@ namespace aoc2019.Puzzles.Solutions
             var (x, y) = (sectionB.A.X, sectionA.A.Y);
 
             // Are sections intersecting
-            if (x >= Math.Min(sectionA.A.X, sectionA.B.X) &&
-                x <= Math.Max(sectionA.A.X, sectionA.B.X) &&
-                y >= Math.Min(sectionB.A.Y, sectionB.B.Y) &&
-                y <= Math.Max(sectionB.A.Y, sectionB.B.Y))
+            if (x >= Math.Min(sectionA.A.X, sectionA.B.X) && x <= Math.Max(sectionA.A.X, sectionA.B.X) &&
+                y >= Math.Min(sectionB.A.Y, sectionB.B.Y) && y <= Math.Max(sectionB.A.Y, sectionB.B.Y))
             {
                 intersection = new Point(x, y);
                 return true;
