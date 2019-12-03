@@ -9,13 +9,15 @@ namespace aoc2019.Puzzles.Test
         [Test]
         public async Task Part1()
         {
-            Assert.That(await Solution.Part1Async(""), Is.Not.Null);
+            var input = @"";
+            Assert.That(await Solution.Part1Async(input), Is.EqualTo(""));
         }
 
         [Test]
         public async Task Part2()
         {
-            Assert.That(await Solution.Part2Async(""), Is.Not.Null);
+            var input = @"";
+            Assert.That(await Solution.Part2Async(input), Is.EqualTo(""));
         }
     }
 }
