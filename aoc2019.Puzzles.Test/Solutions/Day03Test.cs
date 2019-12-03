@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Threading.Tasks;
 
-namespace aoc2019.Puzzles.Test
+namespace aoc2019.Puzzles.Test.Solutions
 {
     public sealed class Day03Test : TestBase<Day03>
     {

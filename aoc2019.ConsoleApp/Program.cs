@@ -168,7 +168,7 @@ namespace aoc2019.ConsoleApp
             var solutionSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_.cs"));
             var solutionTargetFile = new FileInfo(Path.Combine(puzzleProjectPath, "Solutions", $"Day{dayString}.cs"));
             var testSourceFile = new FileInfo(Path.Combine(consoleProjectBinPath, "Template", $"Day_DAYSTRING_Test.cs"));
-            var testTargetFile = new FileInfo(Path.Combine($"{puzzleProjectPath}.Test", $"Day{dayString}Test.cs"));
+            var testTargetFile = new FileInfo(Path.Combine($"{puzzleProjectPath}.Test", "Solutions", $"Day{dayString}Test.cs"));
 
             if (solutionTargetFile.Exists)
             {
