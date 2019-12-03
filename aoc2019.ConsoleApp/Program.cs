@@ -19,6 +19,9 @@ namespace aoc2019.ConsoleApp
     {
         private sealed class Options
         {
+            [Option('a', "all", HelpText = "Run all available solutions.")]
+            public bool RunAllDays { get; set; }
+
             [Option('l', "last", HelpText = "Run the last available solution.")]
             public bool RunLastDay { get; set; }
 
@@ -31,9 +34,10 @@ namespace aoc2019.ConsoleApp
             [Usage(ApplicationAlias = "aoc2019.ConsoleApp")]
             public static IEnumerable<Example> Examples => new Example[]
             {
+                new Example("Run all available solutions", new Options { RunAllDays = true }),
                 new Example("Run the last available solution", new Options { RunLastDay = true }),
                 new Example("Run solution for day 12", new UnParserSettings{ PreferShortName = true }, new Options { DayToRun = 12 }),
-                new Example("Add input and description for day 23 to aoc2019.Puzzles along with an empty solution .cs file", new Options { DayToSetup = 23 }),
+                new Example("Add input and description for day 23 to aoc2019.Puzzles along with an empty test and solution .cs file", new Options { DayToSetup = 23 }),
             };
         }
 
@@ -42,7 +46,16 @@ namespace aoc2019.ConsoleApp
         public Program(string[] args)
         {
             Options options = null;
-            Parser.Default.ParseArguments<Options>(args).WithParsed(o => options = o);
+            if (!args.Any())
+            {
+                Console.WriteLine("Running last available solution. Use --help for available options.");
+                Console.WriteLine();
+                options = new Options { RunLastDay = true };
+            }
+            else
+            {
+                Parser.Default.ParseArguments<Options>(args).WithParsed(o => options = o);
+            }
             myConfig = Configuration.Load();
             myOptions = options;
             mySolutionHandler = new SolutionHandler();
@@ -52,17 +65,38 @@ namespace aoc2019.ConsoleApp
         {
             if (myOptions == null) { return; }
 
+            if (myOptions.DayToSetup.HasValue)
+            {
+                await SetupDay(myOptions.DayToSetup.Value);
+            }
+
+            if (myOptions.RunAllDays)
+            {
+                await SolveAllDays();
+                return;
+            }
+
             if (myOptions.RunLastDay)
             {
                 await SolveLastDay();
             }
+
             if (myOptions.DayToRun.HasValue)
             {
                 await SolveDay(myOptions.DayToRun.Value);
             }
-            if (myOptions.DayToSetup.HasValue)
+        }
+
+        private async Task SolveAllDays()
+        {
+            var count = 0;
+            foreach (var day in mySolutionHandler.Solutions.Keys.OrderBy(x => x))
             {
-                await SetupDay(myOptions.DayToSetup.Value);
+                await SolveDay(day);
+                if (++count < mySolutionHandler.Solutions.Count)
+                {
+                    Console.WriteLine();
+                }
             }
         }
 
@@ -81,13 +115,14 @@ namespace aoc2019.ConsoleApp
 
         private async Task SolveDay(int day)
         {
-            var solution = mySolutionHandler.Solutions[day].CreateInstance();
+            var solutionMetadata = mySolutionHandler.Solutions[day];
+            var solution = solutionMetadata.CreateInstance();
 
             var dayString = day.ToString().PadLeft(2, '0');
             var rootDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var input = File.ReadAllText(Path.Combine(rootDir, "Input", $"day{dayString}.txt"));
 
-            Console.WriteLine($"Solving {day}...");
+            Console.WriteLine($"Day {day}: {solutionMetadata.Title}");
             await SolvePart(1, input, solution.Part1Async);
             await SolvePart(2, input, solution.Part2Async);
         }

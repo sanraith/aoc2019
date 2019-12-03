@@ -24,10 +24,13 @@ To run the Blazor WebAssembly application:
 - <code>dotnet run -p aoc2019.WebApp</code>
 - Open <code>http://localhost:52016/</code>
 
-To run the last puzzle solution in console:
+To run all puzzle solutions in console:
+- <code>dotnet run -p aoc2019.ConsoleApp --all</code>
+
+To run the last solution in console:
 - <code>dotnet run -p aoc2019.ConsoleApp --last</code>
 
-To run a puzzle solution in console:
+To run a specific solution in console:
 - <code>dotnet run -p aoc2019.ConsoleApp --day **[number of day]**</code>
 
 To setup the environment for a new puzzle solution:
