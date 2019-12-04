@@ -38,9 +38,17 @@ namespace aoc2019.Puzzles.Solutions
                     if (digits[i] < digits[i - 1]) { neverDecreases = false; break; }
                 }
 
-                if (neverDecreases && digits.GroupBy(x => x).Any(x => hasExactlyTwoAdjacentDigits ? x.Count() == 2 : x.Count() > 1))
+                if (neverDecreases)
                 {
-                    count++;
+                    var digitCount = new int[10];
+                    foreach (var digit in digits)
+                    {
+                        digitCount[digit - 48]++;
+                    }
+                    if (digitCount.Any(x => hasExactlyTwoAdjacentDigits ? x == 2 : x > 1))
+                    {
+                        count++;
+                    }
                 }
             }
 
