@@ -7,13 +7,13 @@ namespace aoc2019.Puzzles.Test.Solutions
     public sealed class Day02Test : TestBase<Day02>
     {
         [Test]
-        public async Task Part1()
+        public async Task Part1_PuzzleInput()
         {
             Assert.That(await Solution.Part1Async(myInput), Is.EqualTo("3101878"));
         }
 
         [Test]
-        public async Task Part2()
+        public async Task Part2_PuzzleInput()
         {
             Assert.That(await Solution.Part2Async(myInput), Is.EqualTo("8444"));
         }

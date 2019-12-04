@@ -1,58 +1,77 @@
 ﻿using aoc2019.Puzzles.Core;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Solutions
 {
     [Puzzle("Secure Container")]
     public sealed class Day04 : SolutionBase
     {
-        public override async Task<string> Part1Async(string input)
+        public override string Part1(string input)
         {
             var (min, max) = ParseRange(input);
-            var count = await CountPasswords(min, max, hasExactlyTwoAdjacentDigits: false);
+            var count = CountPasswords(min, max, hasExactlyTwoAdjacentDigits: false);
 
             return count.ToString();
         }
 
-        public override async Task<string> Part2Async(string input)
+        public override string Part2(string input)
         {
             var (min, max) = ParseRange(input);
-            var count = await CountPasswords(min, max, hasExactlyTwoAdjacentDigits: true);
+            var count = CountPasswords(min, max, hasExactlyTwoAdjacentDigits: true);
 
             return count.ToString();
         }
 
-        private async Task<int> CountPasswords(int min, int max, bool hasExactlyTwoAdjacentDigits)
+        private static int CountPasswords(int min, int max, bool hasExactlyTwoAdjacentDigits)
+        {
+            var digits = min.ToString().Select(x => Convert.ToInt32(x.ToString())).ToArray();
+            return CountPasswordsRecursive(digits, max, 0, hasExactlyTwoAdjacentDigits);
+        }
+
+        private static int CountPasswordsRecursive(int[] digits, int target, int index, bool hasExactlyTwoAdjacentDigits)
         {
             var count = 0;
-            for (var number = min; number <= max; number++)
+            var start = digits[index];
+            var isLastDigit = index == digits.Length - 1;
+            for (int digit = start; digit < 10; digit++)
             {
-                if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(number - min, max - min); }
-
-                var digits = number.ToString();
-                var neverDecreases = true;
-                for (var i = 1; i < digits.Length; i++)
+                digits[index] = digit;
+                if (index != 0 && digits[index] < digits[index - 1])
                 {
-                    if (digits[i] < digits[i - 1]) { neverDecreases = false; break; }
+                    if (!isLastDigit) { digits[index + 1] = Math.Min(digits[index + 1], digit); }
+                    continue;
                 }
+                if (IsNumberGreaterThanTarget(digits, target)) { break; }
 
-                if (neverDecreases)
+                if (isLastDigit)
                 {
                     var digitCount = new int[10];
-                    foreach (var digit in digits)
-                    {
-                        digitCount[digit - 48]++;
-                    }
+                    foreach (var d in digits) { digitCount[d]++; }
                     if (digitCount.Any(x => hasExactlyTwoAdjacentDigits ? x == 2 : x > 1))
                     {
                         count++;
                     }
                 }
+                else
+                {
+                    count += CountPasswordsRecursive(digits, target, index + 1, hasExactlyTwoAdjacentDigits);
+                    digits[index + 1] = digit;
+                }
             }
 
             return count;
+        }
+
+        private static bool IsNumberGreaterThanTarget(int[] digits, int target)
+        {
+            var number = 0;
+            var length = digits.Length;
+            for (int i = 0; i < length; i++)
+            {
+                number += digits[length - i - 1] * (int)Math.Pow(10, i);
+            }
+            return number > target;
         }
 
         private static (int Min, int Max) ParseRange(string input)
