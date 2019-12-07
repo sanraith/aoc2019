@@ -34,7 +34,7 @@ namespace aoc2019.Puzzles.Solutions
             var count = 0;
             var start = digits[index];
             var isLastDigit = index == digits.Length - 1;
-            for (int digit = start; digit < 10; digit++)
+            for (var digit = start; digit < 10; digit++)
             {
                 digits[index] = digit;
                 if (index != 0 && digits[index] < digits[index - 1])
@@ -67,7 +67,7 @@ namespace aoc2019.Puzzles.Solutions
         {
             var number = 0;
             var length = digits.Length;
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
                 number += digits[length - i - 1] * (int)Math.Pow(10, i);
             }

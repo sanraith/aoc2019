@@ -14,7 +14,7 @@ namespace aoc2019.Puzzles.Solutions
         public override async Task<string> Part1Async(string input)
         {
             var memory = IntMachine.ParseProgram(input);
-            int maxAmplified = await GetMaxAmplifiedValue(memory, new[] { 0, 1, 2, 3, 4 });
+            var maxAmplified = await GetMaxAmplifiedValueAsync(memory, new[] { 0, 1, 2, 3, 4 });
 
             return maxAmplified.ToString();
         }
@@ -22,12 +22,12 @@ namespace aoc2019.Puzzles.Solutions
         public override async Task<string> Part2Async(string input)
         {
             var memory = IntMachine.ParseProgram(input);
-            int maxAmplified = await GetMaxAmplifiedValue(memory, new[] { 5, 6, 7, 8, 9 });
+            var maxAmplified = await GetMaxAmplifiedValueAsync(memory, new[] { 5, 6, 7, 8, 9 });
 
             return maxAmplified.ToString();
         }
 
-        private async Task<int> GetMaxAmplifiedValue(IReadOnlyCollection<int> originalMemory, IEnumerable<int> possiblePhases)
+        private async Task<int> GetMaxAmplifiedValueAsync(IReadOnlyCollection<int> originalMemory, IEnumerable<int> possiblePhases)
         {
             var phaseSequences = possiblePhases.Permutations().ToList();
             var maxAmplified = int.MinValue;
@@ -35,38 +35,38 @@ namespace aoc2019.Puzzles.Solutions
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(index, phaseSequences.Count); }
 
-                var output = await RunAmplifiers(originalMemory, phaseSequence);
+                var output = await RunAmplifiersAsync(originalMemory, phaseSequence);
                 maxAmplified = Math.Max(maxAmplified, output);
             }
 
             return maxAmplified;
         }
 
-        private static async Task<int> RunAmplifiers(IReadOnlyCollection<int> originalMemory, IList<int> phaseSequence)
+        private static async Task<int> RunAmplifiersAsync(IReadOnlyCollection<int> originalMemory, IList<int> phaseSequence)
         {
             var sequenceLength = phaseSequence.Count;
 
             // Create channels
-            var channels = new Channel<int>[sequenceLength];
-            foreach (var (phase, phaseIndex) in phaseSequence.Select((x, i) => (x, i)))
+            var channels = new List<Channel<int>>(sequenceLength);
+            foreach (var phase in phaseSequence)
             {
                 var channel = Channel.CreateUnbounded<int>();
                 await channel.Writer.WriteAsync(phase);
-                channels[phaseIndex] = channel;
+                channels.Add(channel);
             }
             await channels[0].Writer.WriteAsync(0);
 
             // Create amplifiers
-            var amplifiers = new IntMachine[sequenceLength];
-            for (int i = 0; i < sequenceLength; i++)
+            var amplifiers = new List<IntMachine>(sequenceLength);
+            for (var i = 0; i < sequenceLength; i++)
             {
                 var inputChannel = channels[i];
                 var outputChannel = channels[(i + 1) % sequenceLength];
-                amplifiers[i] = new IntMachine(originalMemory.ToArray(), inputChannel, outputChannel);
+                amplifiers.Add(new IntMachine(originalMemory.ToArray(), inputChannel, outputChannel));
             }
 
             // Run amplifiers
-            await Task.WhenAll(amplifiers.Select(x => x.RunProgram()));
+            await Task.WhenAll(amplifiers.Select(x => x.RunProgramAsync()));
             var result = await amplifiers.Last().OutputChannel.Reader.ReadAsync();
             return result;
         }
@@ -86,9 +86,9 @@ namespace aoc2019.Puzzles.Solutions
 
             public static int[] ParseProgram(string input) => GetLines(input).First().Split(new[] { ',' }).Select(x => Convert.ToInt32(x)).ToArray();
 
-            public Task RunProgram() => RunProgram(myMemory, InputChannel.Reader, OutputChannel.Writer);
+            public Task RunProgramAsync() => RunProgramAsync(myMemory, InputChannel.Reader, OutputChannel.Writer);
 
-            private async Task RunProgram(int[] memory, ChannelReader<int> inputChannel, ChannelWriter<int> outputChannel)
+            private async Task RunProgramAsync(int[] memory, ChannelReader<int> inputChannel, ChannelWriter<int> outputChannel)
             {
                 int[] rawParams = new int[ParameterCountsByOpCode.Values.Max()];
                 int[] parsedParams = new int[ParameterCountsByOpCode.Values.Max()];

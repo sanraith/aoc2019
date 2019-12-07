@@ -26,11 +26,11 @@ namespace aoc2019.Puzzles.Solutions
 
         private static IEnumerable<int> RunProgram(int[] memory, IEnumerable<int> inputStream)
         {
-            int[] rawParams = new int[ParameterCountsByOpCode.Values.Max()];
-            int[] parsedParams = new int[ParameterCountsByOpCode.Values.Max()];
+            var rawParams = new int[ParameterCountsByOpCode.Values.Max()];
+            var parsedParams = new int[ParameterCountsByOpCode.Values.Max()];
             var inputEnumerator = inputStream.GetEnumerator();
 
-            int pos = 0;
+            var pos = 0;
             while (pos < memory.Length)
             {
                 var (opCode, parameterModes) = ParseInstruction(memory[pos]);
