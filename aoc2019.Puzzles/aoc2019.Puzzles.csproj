@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="morelinq" Version="3.2.0" />
+    <PackageReference Include="System.Threading.Channels" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

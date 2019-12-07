@@ -7,13 +7,13 @@ Try it at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2
 
 ## Project structure
 
-| Folder          | Description
-| ---        | ---
-| `aoc2019.ConsoleApp` | Console application to prepare and run the puzzle solutions.
-| `aoc2019.Puzzles`  | Inputs and solutions for the Advent of Code puzzles.
+| Folder                 | Description
+| ---                    | ---
+| `aoc2019.ConsoleApp`   | Console application to prepare and run the puzzle solutions.
+| `aoc2019.Puzzles`      | Inputs and solutions for the Advent of Code puzzles.
 | `aoc2019.Puzzles.Test` | Unit tests for the solutions.
-| `aoc2019.WebApp`  | Blazor WebAssembly application to run the puzzle solutions within a WebAssembly-compatible browser.
-| `docs`     | The published version of `aoc2019.WebApp`. Available at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/).
+| `aoc2019.WebApp`       | Blazor WebAssembly application to run the puzzle solutions within a WebAssembly-compatible browser.
+| `docs`                 | The published version of `aoc2019.WebApp`. Available at: [https://sanraith.github.io/aoc2019/](https://sanraith.github.io/aoc2019/).
 
 ## Build and run
 

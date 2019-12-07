@@ -23,6 +23,14 @@ namespace aoc2019.Puzzles.Core
 
         public virtual Task<string> Part2Async(string input) => Task.FromResult(Part2(input));
 
+        /// <summary>
+        /// Breaks the input into lines and removes empty lines at the end.
+        /// </summary>
+        public static List<string> GetLines(string input)
+        {
+            return input.Split('\n').Reverse().SkipWhile(string.IsNullOrEmpty).Reverse().ToList();
+        }
+
         protected virtual SolutionProgress Progress { get; set; } = new SolutionProgress();
 
         /// <summary>
@@ -48,14 +56,6 @@ namespace aoc2019.Puzzles.Core
             myUpdateTick = Environment.TickCount + MillisecondsBetweenProgressUpdates;
             ProgressUpdated?.Invoke(this, new SolutionProgressEventArgs(Progress));
             return Task.Delay(1, CancellationToken);
-        }
-
-        /// <summary>
-        /// Breaks the input into lines and removes empty lines at the end.
-        /// </summary>
-        protected static List<string> GetLines(string input)
-        {
-            return input.Split('\n').Reverse().SkipWhile(string.IsNullOrEmpty).Reverse().ToList();
         }
 
         /// <summary>
