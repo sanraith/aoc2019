@@ -35,12 +35,8 @@ namespace aoc2019.Puzzles.Solutions
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(index, phaseSequences.Count); }
 
-                int output = 0;
-                foreach (var phase in phaseSequence)
-                {
-                    output = await RunAmplifiers(originalMemory, phaseSequence);
-                    maxAmplified = Math.Max(maxAmplified, output);
-                }
+                var output = await RunAmplifiers(originalMemory, phaseSequence);
+                maxAmplified = Math.Max(maxAmplified, output);
             }
 
             return maxAmplified;
