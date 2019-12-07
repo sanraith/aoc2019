@@ -2,7 +2,7 @@
 // keep a handle on the original browser console.error
 const mmerr = console.error;
 const xhrsend = window.XMLHttpRequest.prototype.send;
-const maxResourceCount = 35;
+const maxResourceCount = 40;
 const logResourceCount = true;
 var loadedResourceCount = 0;
 
