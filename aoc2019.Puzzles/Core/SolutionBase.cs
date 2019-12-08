@@ -28,7 +28,7 @@ namespace aoc2019.Puzzles.Core
         /// </summary>
         public static List<string> GetLines(string input)
         {
-            return input.Split('\n').Reverse().SkipWhile(string.IsNullOrEmpty).Reverse().ToList();
+            return input.Replace("\r", string.Empty).Split('\n').Reverse().SkipWhile(string.IsNullOrEmpty).Reverse().ToList();
         }
 
         protected virtual SolutionProgress Progress { get; set; } = new SolutionProgress();
