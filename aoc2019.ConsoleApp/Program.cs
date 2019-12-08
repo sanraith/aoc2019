@@ -132,7 +132,12 @@ namespace aoc2019.ConsoleApp
             try
             {
                 Console.Write($"Part {partNumber}: ");
-                Console.WriteLine(await action(input));
+                var result = await action(input);
+                if (result.Contains(Environment.NewLine))
+                {
+                    result = Environment.NewLine + result;
+                }
+                Console.WriteLine(result);
             }
             catch (NotImplementedException)
             {
