@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace aoc2019.Puzzles.Solutions
 {
     [Puzzle("Sensor Boost")]
-    public sealed class Day09 : SolutionBase, IProgressPublisher
+    public sealed class Day09 : SolutionBase
     {
         public override async Task<string> Part1Async(string input)
         {
@@ -29,9 +29,6 @@ namespace aoc2019.Puzzles.Solutions
             var result = await intMachine.OutputChannel.Reader.ReadAsync();
             return result.ToString();
         }
-
-        bool IProgressPublisher.IsUpdateProgressNeeded() => IsUpdateProgressNeeded();
-        Task IProgressPublisher.UpdateProgressAsync(double current, double total) => UpdateProgressAsync(current, total);
 
         public sealed class IntMachine
         {
@@ -63,7 +60,8 @@ namespace aoc2019.Puzzles.Solutions
                 long pos = 0;
                 while (pos >= 0)
                 {
-                    if (ProgressPublisher?.IsUpdateProgressNeeded() ?? false) { await ProgressPublisher.UpdateProgressAsync(0, 1); }
+                    if (ProgressPublisher != null && ProgressPublisher.IsUpdateProgressNeeded()) { await ProgressPublisher.UpdateProgressAsync(0, 1); }
+
                     var (opCode, parameterModes) = ParseInstruction((int)myMemory[pos]);
                     ResolveParams(pos, parameterModes, ref rawParams, ref resolvedParams);
 

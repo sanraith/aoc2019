@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace aoc2019.Puzzles.Core
 {
-    public abstract class SolutionBase : ISolution
+    public abstract class SolutionBase : ISolution, IProgressPublisher
     {
         public event EventHandler<SolutionProgressEventArgs> ProgressUpdated;
 
@@ -30,6 +30,10 @@ namespace aoc2019.Puzzles.Core
         {
             return input.Replace("\r", string.Empty).Split('\n').Reverse().SkipWhile(string.IsNullOrEmpty).Reverse().ToList();
         }
+
+        bool IProgressPublisher.IsUpdateProgressNeeded() => IsUpdateProgressNeeded();
+
+        Task IProgressPublisher.UpdateProgressAsync(double current, double total) => UpdateProgressAsync(current, total);
 
         protected virtual SolutionProgress Progress { get; set; } = new SolutionProgress();
 
