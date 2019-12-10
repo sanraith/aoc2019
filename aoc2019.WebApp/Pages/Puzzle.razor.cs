@@ -2,6 +2,7 @@
 using aoc2019.WebApp.Services;
 using Microsoft.AspNetCore.Components;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace aoc2019.WebApp.Pages
         public string Day { get; set; }
 
         [Parameter]
-        public int MillisBetweenProgressRender { get; set; } = 500;
+        public int MillisBetweenProgressRender { get; set; } = 100;
 
         [Inject]
         private ISolutionHandler SolutionHandler { get; set; }
@@ -34,6 +35,8 @@ namespace aoc2019.WebApp.Pages
 
         private bool IsWorking { get; set; }
 
+        private Stopwatch CalculationStopwatch { get; set; }
+
         private bool HasInputChanged { get; set; }
 
         private SolutionProgress Progress { get; set; }
@@ -48,6 +51,7 @@ namespace aoc2019.WebApp.Pages
             HasInputChanged = false;
             Results = null;
             Progress = new SolutionProgress();
+            CalculationStopwatch = null;
             if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
             {
                 SolutionMetadata = solutionMetadata;
@@ -91,9 +95,10 @@ namespace aoc2019.WebApp.Pages
                 IsWorking = true;
                 InputHandler.ClearResults(SolutionMetadata.Day);
                 solution = SolutionMetadata.CreateInstance();
+                solution.MillisecondsBetweenProgressUpdates = MillisBetweenProgressRender / 2;
                 solution.CancellationToken = myCancellationTokenSource.Token;
                 solution.ProgressUpdated += OnProgressUpdate;
-
+                CalculationStopwatch = Stopwatch.StartNew();
                 foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1Async, solution.Part2Async }.Select((x, i) => (x, i)))
                 {
                     Progress = new SolutionProgress();
@@ -107,6 +112,7 @@ namespace aoc2019.WebApp.Pages
             {
                 if (solution != null) { solution.ProgressUpdated -= OnProgressUpdate; }
                 IsWorking = false;
+                CalculationStopwatch?.Stop();
             }
         }
 
@@ -118,9 +124,9 @@ namespace aoc2019.WebApp.Pages
 
         private void OnProgressUpdate(object sender, SolutionProgressEventArgs args)
         {
-            Progress = args.Progress;
             if (Environment.TickCount > myProgressRenderTick)
             {
+                Progress = args.Progress;
                 StateHasChanged();
                 myProgressRenderTick = Environment.TickCount + MillisBetweenProgressRender;
             }
