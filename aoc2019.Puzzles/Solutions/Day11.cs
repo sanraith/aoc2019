@@ -32,8 +32,9 @@ namespace aoc2019.Puzzles.Solutions
 
         private static string Render(Dictionary<Point, int> canvas)
         {
-            var topLeft = new Point(canvas.Keys.Min(x => x.X), canvas.Keys.Min(x => x.Y));
-            var bottomRight = new Point(canvas.Keys.Max(x => x.X), canvas.Keys.Max(x => x.Y));
+            var whitePoints = canvas.Where(x => x.Value == 1).Select(x => x.Key).ToList();
+            var topLeft = new Point(whitePoints.Min(x => x.X), whitePoints.Min(x => x.Y));
+            var bottomRight = new Point(whitePoints.Max(x => x.X), whitePoints.Max(x => x.Y));
             var resultSb = new StringBuilder();
             for (var x = topLeft.X; x <= bottomRight.X; x++)
             {
@@ -60,8 +61,8 @@ namespace aoc2019.Puzzles.Solutions
             var directions = new[] { new Point(-1, 0), new Point(0, 1), new Point(1, 0), new Point(0, -1) };
             var direction = 0;
             var pos = new Point(0, 0);
-            var _ = intMachine.RunProgramAsync();
 
+            _ = intMachine.RunProgramAsync();
             while (true)
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }

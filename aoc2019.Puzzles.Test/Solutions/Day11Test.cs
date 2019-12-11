@@ -17,12 +17,12 @@ namespace aoc2019.Puzzles.Test.Solutions
         [Test]
         public async Task Part2()
         {
-            var expectedResult = @" ###  #### ####  ##   ##  #  #  ##  ####
- #  # #    #    #  # #  # #  # #  # #
- ###  ###  ###  #  # #    #### #  # ###
- #  # #    #    #### # ## #  # #### #
- #  # #    #    #  # #  # #  # #  # #
- ###  #    #### #  #  ### #  # #  # #";
+            var expectedResult = @"###  #### ####  ##   ##  #  #  ##  ####
+#  # #    #    #  # #  # #  # #  # #
+###  ###  ###  #  # #    #### #  # ###
+#  # #    #    #### # ## #  # #### #
+#  # #    #    #  # #  # #  # #  # #
+###  #    #### #  #  ### #  # #  # #";
             var expectedLines = expectedResult.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Select(x => x.TrimEnd()).ToList();
 
             var result = await Solution.Part2Async(myInput);
