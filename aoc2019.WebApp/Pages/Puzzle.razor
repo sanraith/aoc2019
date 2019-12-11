@@ -36,7 +36,7 @@ else
                             {
                                 case string text when text.Contains(Environment.NewLine):
                                     var lines = text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-                                    <textarea name="part@(number)result" value="@result" rows="@lines.Length" cols="@lines.Max(x => x.Length)" readonly
+                                    <textarea name="part@(number)result" value="@result" rows="@(lines.Length + 1)" cols="@lines.Max(x => x.Length)" readonly
                                               style="border: none; resize: none; font-family: 'Source Code Pro', monospace; line-height: 12px; font-size: 14px; font-weight: bold;" />
                                     break;
                                 case string text:

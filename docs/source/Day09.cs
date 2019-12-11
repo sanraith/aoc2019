@@ -13,20 +13,20 @@ namespace aoc2019.Puzzles.Solutions
         public override async Task<string> Part1Async(string input)
         {
             var intMachine = new IntMachine(input) { ProgressPublisher = this };
-            await intMachine.InputChannel.Writer.WriteAsync(1);
+            await intMachine.InputChannel.WriteAsync(1);
             await intMachine.RunProgramAsync();
 
-            var result = await intMachine.OutputChannel.Reader.ReadAsync();
+            var result = await intMachine.OutputChannel.ReadAsync();
             return result.ToString();
         }
 
         public override async Task<string> Part2Async(string input)
         {
             var intMachine = new IntMachine(input) { ProgressPublisher = this };
-            await intMachine.InputChannel.Writer.WriteAsync(2);
+            await intMachine.InputChannel.WriteAsync(2);
             await intMachine.RunProgramAsync();
 
-            var result = await intMachine.OutputChannel.Reader.ReadAsync();
+            var result = await intMachine.OutputChannel.ReadAsync();
             return result.ToString();
         }
 
@@ -34,9 +34,9 @@ namespace aoc2019.Puzzles.Solutions
         {
             public IProgressPublisher ProgressPublisher { get; set; }
 
-            public Channel<long> InputChannel { get; }
+            public ChannelWriter<long> InputChannel => myInputChannel.Writer;
 
-            public Channel<long> OutputChannel { get; }
+            public ChannelReader<long> OutputChannel => myOutputChannel.Reader;
 
             public IntMachine(string programString, Channel<long> inputChannel = null, Channel<long> outputChannel = null)
                 : this(ParseProgram(programString), inputChannel, outputChannel) { }
@@ -44,13 +44,13 @@ namespace aoc2019.Puzzles.Solutions
             public IntMachine(long[] memory, Channel<long> inputChannel = null, Channel<long> outputChannel = null)
             {
                 myMemory = memory.Select((v, i) => (v, i)).ToDictionary(x => (long)x.i, x => x.v);
-                InputChannel = inputChannel ?? Channel.CreateUnbounded<long>();
-                OutputChannel = outputChannel ?? Channel.CreateUnbounded<long>();
+                myInputChannel = inputChannel ?? Channel.CreateUnbounded<long>();
+                myOutputChannel = outputChannel ?? Channel.CreateUnbounded<long>();
             }
 
             public static long[] ParseProgram(string input) => GetLines(input).First().Split(new[] { ',' }).Select(x => Convert.ToInt64(x)).ToArray();
 
-            public Task RunProgramAsync() => RunProgramAsync(InputChannel.Reader, OutputChannel.Writer);
+            public Task RunProgramAsync() => RunProgramAsync(myInputChannel.Reader, myOutputChannel.Writer);
 
             private async Task RunProgramAsync(ChannelReader<long> InputChannel, ChannelWriter<long> OutputChannel)
             {
@@ -179,6 +179,8 @@ namespace aoc2019.Puzzles.Solutions
             };
 
             private long myRelativeBase = 0;
+            private readonly Channel<long> myInputChannel;
+            private readonly Channel<long> myOutputChannel;
             private readonly Dictionary<long, long> myMemory;
         }
     }
