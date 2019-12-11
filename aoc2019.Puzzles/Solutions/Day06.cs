@@ -1,5 +1,5 @@
 ﻿using aoc2019.Puzzles.Core;
-using System.Collections.Concurrent;
+using aoc2019.Puzzles.Extensions;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -42,7 +42,7 @@ namespace aoc2019.Puzzles.Solutions
 
         private IDictionary<string, Planet> ParsePlanets(string input)
         {
-            var planets = new ConcurrentDictionary<string, Planet>();
+            var planets = new Dictionary<string, Planet>();
             foreach (var line in GetLines(input))
             {
                 var pair = line.Trim().Split(')');

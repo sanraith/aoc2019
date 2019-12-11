@@ -1,4 +1,5 @@
 ﻿using aoc2019.Puzzles.Core;
+using aoc2019.Puzzles.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -24,7 +25,7 @@ namespace aoc2019.Puzzles.Solutions
             var detectedAsteroidCounts = await GetDetectedAsteroids(asteroids);
             var monitoringStation = detectedAsteroidCounts.OrderByDescending(x => x.Value).First().Key;
             var asteroidsToDestroy = asteroids.Except(new[] { monitoringStation })
-                .Select(x => (Pos: x, Distance: (monitoringStation - x).Length, Angle: (x - monitoringStation).Angle.Value))
+                .Select(x => (Pos: x, Distance: (monitoringStation - x).Length, (x - monitoringStation).Angle))
                 .OrderBy(x => x.Angle)
                 .ThenBy(x => x.Distance)
                 .ToList();
@@ -33,7 +34,7 @@ namespace aoc2019.Puzzles.Solutions
             while (asteroidsToDestroy.Any())
             {
                 var destroyedAsteroids = new List<(Point, double, double)>();
-                foreach (var (asteroidItem, index) in asteroidsToDestroy.Select((x, i) => (x, i)))
+                foreach (var (asteroidItem, index) in asteroidsToDestroy.WithIndex())
                 {
                     var (pos, distance, angle) = asteroidItem;
                     if (index > 0 && Math.Abs(angle - asteroidsToDestroy[index - 1].Angle) <= double.Epsilon)
@@ -57,7 +58,7 @@ namespace aoc2019.Puzzles.Solutions
         private async Task<Dictionary<Point, int>> GetDetectedAsteroids(List<Point> asteroids)
         {
             var detectedAsteroidCounts = new Dictionary<Point, int>();
-            foreach (var (proposedAsteroid, index) in asteroids.Select((x, i) => (x, i)))
+            foreach (var (proposedAsteroid, index) in asteroids.WithIndex())
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(index, asteroids.Count); }
 
@@ -66,7 +67,7 @@ namespace aoc2019.Puzzles.Solutions
                 foreach (var asteroid in asteroids)
                 {
                     if (asteroid == proposedAsteroid) { continue; }
-                    var angle = (asteroid - proposedAsteroid).Angle.Value;
+                    var angle = (asteroid - proposedAsteroid).Angle;
                     detectedAngles.Add(angle);
                 }
                 detectedAsteroidCounts.Add(proposedAsteroid, detectedAngles.Count);
@@ -79,9 +80,9 @@ namespace aoc2019.Puzzles.Solutions
         {
             var lines = GetLines(input);
             var asteroids = new List<Point>();
-            foreach (var (line, y) in lines.Select((x, i) => (x, i)))
+            foreach (var (line, y) in lines.WithIndex())
             {
-                foreach (var (c, x) in line.Select((x, i) => (x, i)))
+                foreach (var (c, x) in line.WithIndex())
                 {
                     if (c == '#') { asteroids.Add(new Point(x, y)); }
                 }
@@ -97,23 +98,35 @@ namespace aoc2019.Puzzles.Solutions
 
             public int Y { get; }
 
-            public double? Angle { get; }
+            public double Angle
+            {
+                get
+                {
+                    if (myAngle == null)
+                    {
+                        if (X == 0 && Y == 0)
+                        {
+                            throw new InvalidOperationException("(0, 0) does not have an angle related to (0, 0)!");
+                        }
+                        else
+                        {
+                            myAngle = Math.Atan2(-Y, X);
+                            myAngle = (Math.PI / 2 - Angle + 2 * Math.PI) % (2 * Math.PI);
+                        }
+                    }
 
-            public double Length => Math.Sqrt(X * X + Y * Y);
+                    return myAngle.Value;
+                }
+            }
+
+            public double Length => myLength ?? (myLength = Math.Sqrt(X * X + Y * Y)).Value;
 
             public Point(int x, int y)
             {
                 X = x;
                 Y = y;
-                if (X == 0 && Y == 0)
-                {
-                    Angle = null;
-                }
-                else
-                {
-                    Angle = Math.Atan2(-Y, X);
-                    Angle = (Math.PI / 2 - Angle + 2 * Math.PI) % (2 * Math.PI);
-                }
+                myAngle = null;
+                myLength = null;
             }
 
             public override bool Equals(object obj) => obj is Point other ? Equals(other) : base.Equals(obj);
@@ -133,6 +146,9 @@ namespace aoc2019.Puzzles.Solutions
             public static Point operator *(Point a, int b) => new Point(a.X * b, a.Y * b);
 
             public static Point Empty { get; } = new Point(0, 0);
+
+            private double? myAngle;
+            private double? myLength;
         }
     }
 }

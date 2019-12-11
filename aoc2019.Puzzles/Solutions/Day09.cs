@@ -1,4 +1,5 @@
 ﻿using aoc2019.Puzzles.Core;
+using aoc2019.Puzzles.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace aoc2019.Puzzles.Solutions
             return result.ToString();
         }
 
-        public sealed class IntMachine
+        public sealed class IntMachine : IntMachineBase
         {
             public IProgressPublisher ProgressPublisher { get; set; }
 
@@ -41,14 +42,11 @@ namespace aoc2019.Puzzles.Solutions
             public IntMachine(string programString, Channel<long> inputChannel = null, Channel<long> outputChannel = null)
                 : this(ParseProgram(programString), inputChannel, outputChannel) { }
 
-            public IntMachine(long[] memory, Channel<long> inputChannel = null, Channel<long> outputChannel = null)
+            public IntMachine(long[] memory, Channel<long> inputChannel = null, Channel<long> outputChannel = null) : base(memory)
             {
-                myMemory = memory.Select((v, i) => (v, i)).ToDictionary(x => (long)x.i, x => x.v);
                 myInputChannel = inputChannel ?? Channel.CreateUnbounded<long>();
                 myOutputChannel = outputChannel ?? Channel.CreateUnbounded<long>();
             }
-
-            public static long[] ParseProgram(string input) => GetLines(input).First().Split(new[] { ',' }).Select(x => Convert.ToInt64(x)).ToArray();
 
             public Task RunProgramAsync() => RunProgramAsync(myInputChannel.Reader, myOutputChannel.Writer);
 
@@ -105,7 +103,20 @@ namespace aoc2019.Puzzles.Solutions
                 }
             }
 
-            private static (int OpCode, int[] ParameterModes) ParseInstruction(int instruction)
+            private readonly Channel<long> myInputChannel;
+            private readonly Channel<long> myOutputChannel;
+        }
+
+        public abstract class IntMachineBase
+        {
+            protected IntMachineBase(long[] memory)
+            {
+                myMemory = memory.Select((v, i) => (v, i)).ToDictionary(x => (long)x.i, x => x.v);
+            }
+
+            public static long[] ParseProgram(string input) => GetLines(input).First().Split(new[] { ',' }).Select(x => Convert.ToInt64(x)).ToArray();
+
+            protected static (int OpCode, int[] ParameterModes) ParseInstruction(int instruction)
             {
                 var opCode = instruction % 100;
                 instruction /= 100;
@@ -125,7 +136,7 @@ namespace aoc2019.Puzzles.Solutions
                 return (opCode, parameterModes);
             }
 
-            private void ResolveParams(long opPos, int[] parameterModes, ref long[] rawParams, ref long[] resolvedParams)
+            protected void ResolveParams(long opPos, int[] parameterModes, ref long[] rawParams, ref long[] resolvedParams)
             {
                 var count = parameterModes.Length;
                 for (var i = 0; i < count; i++)
@@ -138,13 +149,13 @@ namespace aoc2019.Puzzles.Solutions
                     switch (parameterModes[i])
                     {
                         case 0:
-                            resolvedParams[i] = SafeReadMemory(rawParams[i]);
+                            resolvedParams[i] = myMemory.GetOrAdd(rawParams[i], _ => 0);
                             break;
                         case 1:
                             resolvedParams[i] = rawParams[i];
                             break;
                         case 2:
-                            resolvedParams[i] = SafeReadMemory(rawParams[i] + myRelativeBase);
+                            resolvedParams[i] = myMemory.GetOrAdd(rawParams[i] + myRelativeBase, _ => 0);
                             rawParams[i] = rawParams[i] + myRelativeBase;
                             break;
                         default:
@@ -153,18 +164,7 @@ namespace aoc2019.Puzzles.Solutions
                 }
             }
 
-            private long SafeReadMemory(long address)
-            {
-                if (!myMemory.TryGetValue(address, out var value))
-                {
-                    value = 0;
-                    myMemory.Add(address, value);
-                }
-
-                return value;
-            }
-
-            private static readonly Dictionary<int, int> ParameterCountsByOpCode = new Dictionary<int, int>
+            protected static readonly Dictionary<int, int> ParameterCountsByOpCode = new Dictionary<int, int>
             {
                 [1] = 3,
                 [2] = 3,
@@ -178,10 +178,8 @@ namespace aoc2019.Puzzles.Solutions
                 [99] = 0
             };
 
-            private long myRelativeBase = 0;
-            private readonly Channel<long> myInputChannel;
-            private readonly Channel<long> myOutputChannel;
-            private readonly Dictionary<long, long> myMemory;
+            protected long myRelativeBase = 0;
+            protected readonly Dictionary<long, long> myMemory;
         }
     }
 }

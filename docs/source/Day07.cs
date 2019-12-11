@@ -1,4 +1,5 @@
 ﻿using aoc2019.Puzzles.Core;
+using aoc2019.Puzzles.Extensions;
 using MoreLinq.Extensions;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace aoc2019.Puzzles.Solutions
         {
             var phaseSequences = possiblePhases.Permutations().ToList();
             var maxAmplified = int.MinValue;
-            foreach (var (phaseSequence, index) in phaseSequences.Select((x, i) => (x, i)))
+            foreach (var (phaseSequence, index) in phaseSequences.WithIndex())
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(index, phaseSequences.Count); }
 
