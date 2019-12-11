@@ -16,7 +16,7 @@ namespace aoc2019.Puzzles.Test.Solutions
             var intMachine = new Day09.IntMachine(input);
             await intMachine.RunProgramAsync();
             var outputs = new List<long>();
-            await foreach (var output in intMachine.OutputChannel.Reader.ReadAllAsync()) { outputs.Add(output); }
+            await foreach (var output in intMachine.OutputChannel.ReadAllAsync()) { outputs.Add(output); }
             Assert.That(outputs, Is.EqualTo(input.Split(',').Select(x => Convert.ToInt64(x)).ToList()));
         }
 
@@ -27,7 +27,7 @@ namespace aoc2019.Puzzles.Test.Solutions
             var outputs = new List<long>();
             var intMachine = new Day09.IntMachine(input);
             await intMachine.RunProgramAsync();
-            await foreach (var output in intMachine.OutputChannel.Reader.ReadAllAsync())
+            await foreach (var output in intMachine.OutputChannel.ReadAllAsync())
             {
                 outputs.Add(output);
             }
@@ -37,7 +37,7 @@ namespace aoc2019.Puzzles.Test.Solutions
             outputs = new List<long>();
             intMachine = new Day09.IntMachine(input);
             await intMachine.RunProgramAsync();
-            await foreach (var output in intMachine.OutputChannel.Reader.ReadAllAsync()) { outputs.Add(output); }
+            await foreach (var output in intMachine.OutputChannel.ReadAllAsync()) { outputs.Add(output); }
             Assert.That(outputs.Single(), Is.EqualTo(1125899906842624));
         }
     }
