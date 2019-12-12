@@ -20,24 +20,7 @@ namespace aoc2019.Puzzles.Solutions
 
             for (var iteration = 0; iteration < Part1StepCount; iteration++)
             {
-                foreach (var (moonA, index) in moons.WithIndex())
-                {
-                    foreach (var moonB in moons.Skip(index + 1))
-                    {
-                        var diffX = moonA.Pos.X.CompareTo(moonB.Pos.X);
-                        var diffY = moonA.Pos.Y.CompareTo(moonB.Pos.Y);
-                        var diffZ = moonA.Pos.Z.CompareTo(moonB.Pos.Z);
-
-                        var gravity = new Vector3D(diffX, diffY, diffZ);
-                        moonA.Velocity += gravity * -1;
-                        moonB.Velocity += gravity;
-                    }
-                }
-
-                foreach (var moon in moons)
-                {
-                    moon.Pos += moon.Velocity;
-                }
+                Step(moons);
             }
 
             var totalEnergy = 0;
@@ -54,8 +37,104 @@ namespace aoc2019.Puzzles.Solutions
         public override async Task<string> Part2Async(string input)
         {
             var moons = GetMoons(input);
+            var xState = moons.Select(x => x.Pos.X).Concat(moons.Select(x => x.Velocity.X)).ToArray();
+            var yState = moons.Select(x => x.Pos.Y).Concat(moons.Select(x => x.Velocity.Y)).ToArray();
+            var zState = moons.Select(x => x.Pos.Z).Concat(moons.Select(x => x.Velocity.Z)).ToArray();
 
-            throw new NotImplementedException();
+            var cycles = new int[3];
+
+            var step = 0;
+            while (true)
+            {
+                if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(cycles.Count(x => x > 0), 3); }
+                Step(moons);
+                step++;
+
+                if (cycles[0] == 0 && xState.SequenceEqual(moons.Select(m => m.Pos.X).Concat(moons.Select(m => m.Velocity.X))))
+                {
+                    cycles[0] = step;
+                    if (cycles.All(x => x > 0)) { break; }
+                }
+                if (cycles[1] == 0 && yState.SequenceEqual(moons.Select(m => m.Pos.Y).Concat(moons.Select(m => m.Velocity.Y))))
+                {
+                    cycles[1] = step;
+                    if (cycles.All(x => x > 0)) { break; }
+                }
+                if (cycles[2] == 0 && zState.SequenceEqual(moons.Select(m => m.Pos.Z).Concat(moons.Select(m => m.Velocity.Z))))
+                {
+                    cycles[2] = step;
+                    if (cycles.All(x => x > 0)) { break; }
+                }
+            }
+            var lcm = GetLeastCommonMultiple(cycles);
+
+            return lcm.ToString();
+        }
+
+        public static long GetLeastCommonMultiple(int[] elements)
+        {
+            long lcm = 1;
+            int divisor = 2;
+
+            while (true)
+            {
+                int counter = 0;
+                bool divisible = false;
+                for (int i = 0; i < elements.Length; i++)
+                {
+                    if (elements[i] == 0)
+                    {
+                        continue; // Do not consider zero.
+                    }
+                    else if (elements[i] < 0)
+                    {
+                        elements[i] = elements[i] * (-1);
+                    }
+                    if (elements[i] == 1)
+                    {
+                        counter++;
+                    }
+                    if (elements[i] % divisor == 0)
+                    {
+                        divisible = true;
+                        elements[i] = elements[i] / divisor;
+                    }
+                }
+                if (divisible)
+                {
+                    lcm = lcm * divisor;
+                }
+                else
+                {
+                    divisor++;
+                }
+                if (counter == elements.Length)
+                {
+                    return lcm;
+                }
+            }
+        }
+
+        private static void Step(List<Moon> moons)
+        {
+            foreach (var (moonA, index) in moons.WithIndex())
+            {
+                foreach (var moonB in moons.Skip(index + 1))
+                {
+                    var diffX = moonA.Pos.X.CompareTo(moonB.Pos.X);
+                    var diffY = moonA.Pos.Y.CompareTo(moonB.Pos.Y);
+                    var diffZ = moonA.Pos.Z.CompareTo(moonB.Pos.Z);
+
+                    var gravity = new Vector3D(diffX, diffY, diffZ);
+                    moonA.Velocity += gravity * -1;
+                    moonB.Velocity += gravity;
+                }
+            }
+
+            foreach (var moon in moons)
+            {
+                moon.Pos += moon.Velocity;
+            }
         }
 
         private static List<Moon> GetMoons(string input)
