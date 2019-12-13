@@ -25,6 +25,9 @@ namespace aoc2019.WebApp.Shared
         [Parameter]
         public bool IsEnabled { get; set; } = true;
 
+        [Parameter]
+        public bool IsVisible { get; set; } = true;
+
         /// <summary>
         /// The content of the page.
         /// </summary>

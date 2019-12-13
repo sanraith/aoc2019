@@ -13,6 +13,8 @@ namespace aoc2019.Puzzles.Solutions
     [Puzzle("Care Package")]
     public sealed class Day13 : SolutionBase
     {
+        public List<List<(Point, long)>> VisualizationFrames { get; private set; }
+
         public override async Task<string> Part1Async(string input)
         {
             var intMachine = new SynchronousIntMachine(input);
@@ -24,6 +26,7 @@ namespace aoc2019.Puzzles.Solutions
 
         public override async Task<string> Part2Async(string input)
         {
+            VisualizationFrames = new List<List<(Point, long)>>();
             var memory = IntMachineBase.ParseProgram(input);
             memory[0] = 2; // Insert Coin
             var intMachine = new SynchronousIntMachine(memory);
@@ -34,30 +37,34 @@ namespace aoc2019.Puzzles.Solutions
             var blockCount = maxBlockCount;
             var ball = Point.Empty;
             var paddle = Point.Empty;
+            var frame = new List<(Point, long)>();
             ReturnCode returnCode;
-            while (blockCount > -1 && (returnCode = intMachine.RunUntilBlockOrComplete()) != ReturnCode.Completed)
+            while ((returnCode = intMachine.RunUntilBlockOrComplete()) != ReturnCode.Completed)
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(maxBlockCount - blockCount, maxBlockCount); }
 
                 switch (returnCode)
                 {
                     case ReturnCode.WaitingForInput:
-                        if (blockCount == 0) { blockCount = -1; break; }
+                        VisualizationFrames.Add(frame); frame = new List<(Point, long)>();
                         var joystickInput = ball.X.CompareTo(paddle.X);
                         intMachine.InputQueue.Enqueue(joystickInput);
                         break;
                     case ReturnCode.WrittenOutput:
-                        HandleTileChange(intMachine, tiles, ref score, ref blockCount, ref ball, ref paddle);
+                        HandleTileChange(intMachine, tiles, frame, ref score, ref blockCount, ref ball, ref paddle);
                         break;
                 }
             }
+            VisualizationFrames.Add(frame);
 
             return score.ToString();
         }
 
-        private void HandleTileChange(SynchronousIntMachine intMachine, Tile[][] tiles, ref long score, ref int blockCount, ref Point ball, ref Point paddle)
+        private void HandleTileChange(SynchronousIntMachine intMachine, Tile[][] tiles, List<(Point, long)> frame,
+            ref long score, ref int blockCount, ref Point ball, ref Point paddle)
         {
             var (x, y, t) = GetTile(intMachine);
+            frame.Add((new Point(x, y), t));
             if (x == -1)
             {
                 score = t;
@@ -81,18 +88,20 @@ namespace aoc2019.Puzzles.Solutions
 
         private async Task<Tile[][]> LoadTiles(SynchronousIntMachine intMachine)
         {
-            var tilesDict = new Dictionary<Point, Tile>();
+            var tilesDict = new Dictionary<Point, long>();
             while (intMachine.RunUntilBlockOrComplete() == ReturnCode.WrittenOutput)
             {
                 if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }
                 var (x, y, tile) = GetTile(intMachine);
-                tilesDict[new Point(x, y)] = (Tile)tile;
+                tilesDict[new Point(x, y)] = tile;
             }
+
+            VisualizationFrames?.Add(tilesDict.Select(t => (t.Key, t.Value)).ToList());
 
             var width = tilesDict.Keys.Max(p => p.X) + 1;
             var height = tilesDict.Keys.Max(p => p.Y) + 1;
             var tiles = Enumerable.Range(0, width).Select(x => new Tile[height]).ToArray();
-            tilesDict.Where(t => t.Key.X >= 0).ForEach(t => tiles[t.Key.X][t.Key.Y] = t.Value);
+            tilesDict.Where(t => t.Key.X >= 0).ForEach(t => tiles[t.Key.X][t.Key.Y] = (Tile)t.Value);
 
             return tiles;
         }
@@ -107,7 +116,7 @@ namespace aoc2019.Puzzles.Solutions
             return (x, y, tile);
         }
 
-        private enum Tile
+        public enum Tile
         {
             Empty = 0,
             Wall = 1,

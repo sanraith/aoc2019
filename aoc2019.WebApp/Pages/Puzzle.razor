@@ -90,8 +90,23 @@ else
     </div>
 
     <div style="margin-top: 4em; margin-bottom: 4em;">
-        <TabControl>
-            <TabPage Name="Description" IsActive>
+        <TabControl OnActivatePage="VisualizerHandler.CancelAllVisualizations">
+            <TabPage Name="Visualization" IsVisible="SolutionMetadata != null && VisualizerHandler.GetVisualizer(SolutionMetadata.Type) != null" IsActive>
+                @if (IsWorking)
+                {
+                    <span>Calculating...</span>
+
+                }
+                else if (SolutionInstance == null)
+                {
+                    <span>Click 'Solve' to see the visualization!</span>
+                }
+                else
+                {
+                    <DynamicVisualizer SolutionInstance="SolutionInstance"></DynamicVisualizer>
+                }
+            </TabPage>
+            <TabPage Name="Description">
                 <div style="margin-top: 2em; font-size: 12px">Source: <a href="https://adventofcode.com/2019/day/@(SolutionMetadata.Day)">Advent of Code</a></div>
                 <div style="font-family: 'Source Code Pro', monospace; font-size: 14px; max-width: 60em">
                     @((MarkupString)Description)

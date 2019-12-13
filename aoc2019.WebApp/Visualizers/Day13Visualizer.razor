@@ -1,0 +1,9 @@
+﻿<div style="display: flex; margin-bottom: 1em; margin-top: 1em">
+    <div style="margin-right: 1em">
+        <button @onclick="async () => await PlayAsync()" style="display: @(!IsPlaying ? "block" : "none")">Play</button>
+        <button @onclick="Stop" style="display: @(IsPlaying ? "block" : "none")">Stop</button>
+    </div>
+    Score: @Score
+</div>
+
+<pre style="line-height: 12px; overflow: hidden">@Content</pre>

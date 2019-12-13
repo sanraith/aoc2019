@@ -23,6 +23,9 @@ namespace aoc2019.WebApp.Pages
         [Inject]
         private IInputHandler InputHandler { get; set; }
 
+        [Inject]
+        private IVisualizerHandler VisualizerHandler { get; set; }
+
         private SolutionMetadata SolutionMetadata { get; set; }
 
         private string Input { get; set; }
@@ -41,6 +44,8 @@ namespace aoc2019.WebApp.Pages
 
         private SolutionProgress Progress { get; set; }
 
+        private ISolution SolutionInstance { get; set; }
+
         protected override Task OnParametersSetAsync() => InitAsync();
 
         private async Task InitAsync()
@@ -52,6 +57,7 @@ namespace aoc2019.WebApp.Pages
             Results = null;
             Progress = new SolutionProgress();
             CalculationStopwatch = null;
+            SolutionInstance = null;
             if (int.TryParse(Day, out var dayNumber) && SolutionHandler.Solutions.TryGetValue(dayNumber, out var solutionMetadata))
             {
                 SolutionMetadata = solutionMetadata;
@@ -89,17 +95,17 @@ namespace aoc2019.WebApp.Pages
         private async Task SolveAsync()
         {
             myCancellationTokenSource = new CancellationTokenSource();
-            ISolution solution = null;
+            SolutionInstance = null;
             try
             {
                 IsWorking = true;
                 InputHandler.ClearResults(SolutionMetadata.Day);
-                solution = SolutionMetadata.CreateInstance();
-                solution.MillisecondsBetweenProgressUpdates = MillisBetweenProgressRender / 2;
-                solution.CancellationToken = myCancellationTokenSource.Token;
-                solution.ProgressUpdated += OnProgressUpdate;
+                SolutionInstance = SolutionMetadata.CreateInstance();
+                SolutionInstance.MillisecondsBetweenProgressUpdates = MillisBetweenProgressRender / 2;
+                SolutionInstance.CancellationToken = myCancellationTokenSource.Token;
+                SolutionInstance.ProgressUpdated += OnProgressUpdate;
                 CalculationStopwatch = Stopwatch.StartNew();
-                foreach (var (part, index) in new Func<string, Task<string>>[] { solution.Part1Async, solution.Part2Async }.Select((x, i) => (x, i)))
+                foreach (var (part, index) in new Func<string, Task<string>>[] { SolutionInstance.Part1Async, SolutionInstance.Part2Async }.Select((x, i) => (x, i)))
                 {
                     Progress = new SolutionProgress();
                     StateHasChanged();
@@ -110,7 +116,7 @@ namespace aoc2019.WebApp.Pages
             }
             finally
             {
-                if (solution != null) { solution.ProgressUpdated -= OnProgressUpdate; }
+                if (SolutionInstance != null) { SolutionInstance.ProgressUpdated -= OnProgressUpdate; }
                 IsWorking = false;
                 CalculationStopwatch?.Stop();
             }
@@ -120,6 +126,7 @@ namespace aoc2019.WebApp.Pages
         {
             IsWorking = false;
             myCancellationTokenSource?.Cancel(true);
+            VisualizerHandler.CancelAllVisualizations();
         }
 
         private void OnProgressUpdate(object sender, SolutionProgressEventArgs args)

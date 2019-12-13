@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,9 +18,23 @@ namespace aoc2019.WebApp.Shared
         public RenderFragment ChildContent { get; set; }
 
         /// <summary>
+        /// Called when the <see cref="ActivePage"/> is changed.
+        /// </summary>
+        [Parameter]
+        public Action OnActivatePage { get; set; }
+
+        /// <summary>
         /// The active page of the TabControl.
         /// </summary>
-        public TabPage ActivePage { get; set; }
+        public TabPage ActivePage
+        {
+            get => myActivePage;
+            set
+            {
+                myActivePage = value;
+                OnActivatePage?.Invoke();
+            }
+        }
 
         /// <summary>
         /// The pages of the TabControl.
@@ -44,13 +59,14 @@ namespace aoc2019.WebApp.Shared
 
         protected override void OnParametersSet()
         {
-            if (ActivePage != null && !ActivePage.IsEnabled)
+            if (ActivePage != null && (!ActivePage.IsEnabled || !ActivePage.IsVisible))
             {
-                var firstEnabledPage = Pages.FirstOrDefault(x => x.IsEnabled);
+                var firstEnabledPage = Pages.FirstOrDefault(x => x.IsEnabled && x.IsVisible);
                 ActivatePage(firstEnabledPage);
             }
         }
 
         private readonly List<TabPage> myPages = new List<TabPage>();
+        private TabPage myActivePage;
     }
 }

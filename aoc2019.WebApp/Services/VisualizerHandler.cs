@@ -2,12 +2,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace aoc2019.WebApp.Services
 {
     public interface IVisualizerHandler
     {
-        IVisualizer GetVisualizer(Type solutionType);
+        Type GetVisualizer(Type solutionType);
+
+        void CancelAllVisualizations();
+
+        CancellationToken GetVisualizationCancellationToken();
     }
 
     public sealed class VisualizerHandler : IVisualizerHandler
@@ -19,11 +24,11 @@ namespace aoc2019.WebApp.Services
             VisualizersBySolutionType = GatherPuzzleSolutions();
         }
 
-        public IVisualizer GetVisualizer(Type solutionType)
+        public Type GetVisualizer(Type solutionType)
         {
             if (VisualizersBySolutionType.TryGetValue(solutionType, out var visualizerType))
             {
-                return (IVisualizer)Activator.CreateInstance(visualizerType);
+                return visualizerType;
             }
             return null;
         }
@@ -47,5 +52,15 @@ namespace aoc2019.WebApp.Services
 
             return visualizersBySolutionType;
         }
+
+        public void CancelAllVisualizations()
+        {
+            myCancellationTokenSource.Cancel();
+            myCancellationTokenSource = new CancellationTokenSource();
+        }
+
+        public CancellationToken GetVisualizationCancellationToken() => myCancellationTokenSource.Token;
+
+        private CancellationTokenSource myCancellationTokenSource = new CancellationTokenSource();
     }
 }

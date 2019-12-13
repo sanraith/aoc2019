@@ -5,6 +5,6 @@ namespace aoc2019.WebApp.Visualizers
 {
     public interface IVisualizer
     {
-        Task VisualizeAsync(ISolution solution);
+        ISolution SolutionInstance { get; set; }
     }
 }

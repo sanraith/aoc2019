@@ -92,7 +92,7 @@ namespace aoc2019.Puzzles.Solutions
         }
 
         [DebuggerDisplay("X={X} Y={Y}")]
-        internal struct Point : IEquatable<Point>
+        public struct Point : IEquatable<Point>
         {
             public int X { get; }
 
