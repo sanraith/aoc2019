@@ -57,30 +57,30 @@ namespace aoc2019.Puzzles.Solutions
             var stock = chemicals.Values.ToDictionary(k => k, v => (long)0);
             var fuel = chemicals[Fuel];
             var ore = chemicals[Ore];
-            long requiredOreCount = 0;
+            long requiredOreAmount = 0;
 
             var craftingStack = new Stack<(Chemical chemical, long Count)>();
             fuel.Recipe.Ingredients.ForEach(i => craftingStack.Push((i.Chemical, i.Count * fuelCount)));
 
             while (craftingStack.Count > 0)
             {
-                var (chemical, required) = craftingStack.Pop();
+                var (chemical, requiredAmount) = craftingStack.Pop();
                 if (chemical == ore)
                 {
-                    requiredOreCount += required;
+                    requiredOreAmount += requiredAmount;
                     continue;
                 }
 
                 var currentStock = stock[chemical];
-                if (currentStock >= required)
+                if (currentStock >= requiredAmount)
                 {
-                    stock[chemical] -= required;
+                    stock[chemical] -= requiredAmount;
                 }
                 else
                 {
                     var batchSize = chemical.Recipe.ResultCount;
-                    var recipeCount = (long)Math.Ceiling((required - currentStock) / (double)batchSize);
-                    stock[chemical] += recipeCount * batchSize - required;
+                    var recipeCount = (long)Math.Ceiling((requiredAmount - currentStock) / (double)batchSize);
+                    stock[chemical] += recipeCount * batchSize - requiredAmount;
                     foreach (var ingredient in chemical.Recipe.Ingredients)
                     {
                         craftingStack.Push((ingredient.Chemical, recipeCount * ingredient.Count));
@@ -88,7 +88,7 @@ namespace aoc2019.Puzzles.Solutions
                 }
             }
 
-            return requiredOreCount;
+            return requiredOreAmount;
         }
 
         private Dictionary<string, Chemical> ParseChemicals(string input)

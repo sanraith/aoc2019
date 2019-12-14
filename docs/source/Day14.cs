@@ -64,23 +64,23 @@ namespace aoc2019.Puzzles.Solutions
 
             while (craftingStack.Count > 0)
             {
-                var (chemical, required) = craftingStack.Pop();
+                var (chemical, requiredAmount) = craftingStack.Pop();
                 if (chemical == ore)
                 {
-                    requiredOreCount += required;
+                    requiredOreCount += requiredAmount;
                     continue;
                 }
 
                 var currentStock = stock[chemical];
-                if (currentStock >= required)
+                if (currentStock >= requiredAmount)
                 {
-                    stock[chemical] -= required;
+                    stock[chemical] -= requiredAmount;
                 }
                 else
                 {
                     var batchSize = chemical.Recipe.ResultCount;
-                    var recipeCount = (long)Math.Ceiling((required - currentStock) / (double)batchSize);
-                    stock[chemical] += recipeCount * batchSize - required;
+                    var recipeCount = (long)Math.Ceiling((requiredAmount - currentStock) / (double)batchSize);
+                    stock[chemical] += recipeCount * batchSize - requiredAmount;
                     foreach (var ingredient in chemical.Recipe.Ingredients)
                     {
                         craftingStack.Push((ingredient.Chemical, recipeCount * ingredient.Count));
