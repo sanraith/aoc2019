@@ -57,7 +57,7 @@ namespace aoc2019.Puzzles.Solutions
             var stock = chemicals.Values.ToDictionary(k => k, v => (long)0);
             var fuel = chemicals[Fuel];
             var ore = chemicals[Ore];
-            long requiredOreCount = 0;
+            long requiredOreAmount = 0;
 
             var craftingStack = new Stack<(Chemical chemical, long Count)>();
             fuel.Recipe.Ingredients.ForEach(i => craftingStack.Push((i.Chemical, i.Count * fuelCount)));
@@ -67,7 +67,7 @@ namespace aoc2019.Puzzles.Solutions
                 var (chemical, requiredAmount) = craftingStack.Pop();
                 if (chemical == ore)
                 {
-                    requiredOreCount += requiredAmount;
+                    requiredOreAmount += requiredAmount;
                     continue;
                 }
 
@@ -88,7 +88,7 @@ namespace aoc2019.Puzzles.Solutions
                 }
             }
 
-            return requiredOreCount;
+            return requiredOreAmount;
         }
 
         private Dictionary<string, Chemical> ParseChemicals(string input)
