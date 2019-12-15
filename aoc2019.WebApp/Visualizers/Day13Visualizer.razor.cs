@@ -61,8 +61,8 @@ namespace aoc2019.WebApp.Visualizers
                     switch ((Day13.Tile)tile)
                     {
                         case Day13.Tile.Empty: c = ' '; break;
-                        case Day13.Tile.Wall: c = '█'; break;
-                        case Day13.Tile.Block: c = '▄'; break;
+                        case Day13.Tile.Wall: c = '▓'; break;
+                        case Day13.Tile.Block: c = '■'; break;
                         case Day13.Tile.Paddle: c = '─'; break;
                         case Day13.Tile.Ball: c = 'o'; break;
                         default: c = '?'; break;

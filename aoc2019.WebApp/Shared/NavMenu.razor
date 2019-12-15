@@ -1,4 +1,5 @@
 ﻿@inject ISolutionHandler SolutionHandler
+@inject aoc2019.WebApp.Services.IVisualizerHandler VisualizerHandler
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">aoc2019.WebApp</a>
@@ -16,19 +17,22 @@
         </li>
         @foreach (var day in Enumerable.Range(1, 25))
         {
-            var smallText = "";
             var href = $"puzzle/{day}";
-            var iconClass = "oi-circle-x";
             if (SolutionHandler.Solutions.TryGetValue(day, out var solution))
             {
-                smallText = $" - {solution.Title}";
-                iconClass = "oi-circle-check";
                 <li class="nav-item px-3" style="line-height: 0; height:auto; padding-top: 0; padding-bottom: 0">
                     <NavLink AdditionalAttributes='new Dictionary<string, object>(){ { "class", "nav-link" },{"href", href },{ "style", "display:block; line-height: 1; height:auto; padding-top: 4px; padding-bottom: 4px" } }'>
                         <span>
-                            <span class="oi @iconClass" aria-hidden="true" style="margin-right: -4px"></span>
+                            @if (VisualizerHandler.GetVisualizer(solution.Type) != null)
+                            {
+                                <span class="oi oi-image" title="This solution is also visualized." aria-hidden="true" style="margin-right: -4px"></span>
+                            }
+                            else
+                            {
+                                <span class="oi oi-circle-check" aria-hidden="true" style="margin-right: -4px"></span>
+                            }
                             Day @day
-                        </span><span class="small">@smallText</span>
+                        </span><span class="small">@($" - {solution.Title}")</span>
                     </NavLink>
                 </li>
             }
