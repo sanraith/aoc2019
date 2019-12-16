@@ -1,4 +1,5 @@
 ﻿using aoc2019.Puzzles.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace aoc2019.Puzzles.Solutions
         public Dictionary<Point, Tile> Map { get; private set; }
         public HashSet<Point> OxygenVisited { get; private set; }
         public List<Point> PathToOxygenGenerator { get; private set; }
+
+        public Day15() => myDirectionCodes = myDirections.ToDictionary(k => k.Value, v => v.Key);
 
         public override async Task<string> Part1Async(string input)
         {
@@ -56,54 +59,87 @@ namespace aoc2019.Puzzles.Solutions
         {
             myIntMachine = new SynchronousIntMachine(input);
             Map = new Dictionary<Point, Tile>() { [new Point(0, 0)] = Tile.Empty };
-            PathToOxygenGenerator = new List<Point>();
-            await Backtrack(new Point(0, 0), null);
-            PathToOxygenGenerator.Reverse();
+            await Backtrack();
+            PathToOxygenGenerator = FindPath(Point.Empty, Map.First(x => x.Value == Tile.OxygenSystem).Key).Skip(1).ToList();
         }
 
-        private async Task<bool> Backtrack(Point pos, Point? backDirection)
+        private async Task Backtrack()
         {
-            if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }
-
-            var backDirectionCode = -1;
-            var foundPath = false;
-            for (var directionCode = 1; directionCode <= 4; directionCode++)
+            var currentPos = Point.Empty;
+            var stack = new Stack<(Point, int)>(myDirections.Keys.Select(c => (currentPos, c)));
+            while (stack.Count > 0)
             {
-                var direction = myDirections[directionCode];
-                if (direction == backDirection) { backDirectionCode = directionCode; continue; }
+                if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(Map.Count, Math.Max(Map.Count + 1, 41 * 41)); }
 
+                var (pos, directionCode) = stack.Pop();
+                var direction = myDirections[directionCode];
                 var nextPos = pos + direction;
                 if (Map.ContainsKey(nextPos)) { continue; }
+
+                if (currentPos != pos)
+                {
+                    currentPos = GoTo(currentPos, pos);
+                }
 
                 long tileCode = Step(directionCode);
                 switch (tileCode)
                 {
                     case 0:
                         Map[nextPos] = Tile.Wall;
-                        break;
+                        continue;
                     case 1:
                         Map[nextPos] = Tile.Empty;
-                        if (await Backtrack(nextPos, direction * -1))
-                        {
-                            PathToOxygenGenerator.Add(pos);
-                            foundPath = true;
-                        }
                         break;
                     case 2:
                         Map[nextPos] = Tile.OxygenSystem;
-                        PathToOxygenGenerator.Add(pos);
-                        foundPath = true;
-                        await Backtrack(nextPos, direction * -1);
                         break;
+                }
+
+                currentPos = nextPos;
+                for (var nextDirectionCode = 1; nextDirectionCode <= 4; nextDirectionCode++)
+                {
+                    stack.Push((nextPos, nextDirectionCode));
+                }
+            }
+        }
+
+        private Point GoTo(Point currentPos, Point targetPos)
+        {
+            var path = FindPath(currentPos, targetPos);
+            for (var i = 1; i < path.Count; i++)
+            {
+                var direction = path[i] - path[i - 1];
+                var directionCode = myDirectionCodes[direction];
+                Step(directionCode);
+            }
+            return targetPos;
+        }
+
+        private List<Point> FindPath(Point start, Point end)
+        {
+            var visited = new HashSet<Point>();
+            var queue = new Queue<(Point, List<Point>)>(new[] { (start, new List<Point>()) });
+            while (queue.Count > 0)
+            {
+                var (pos, path) = queue.Dequeue();
+                if (!visited.Add(pos)) { continue; }
+
+                var nextPath = path.ToList();
+                nextPath.Add(pos);
+                if (pos == end) { return nextPath; }
+
+                foreach (var direction in myDirections.Values)
+                {
+                    var nextPos = pos + direction;
+                    if (!Map.TryGetValue(nextPos, out var tile) || tile == Tile.Wall)
+                    {
+                        continue;
+                    }
+                    queue.Enqueue((nextPos, nextPath));
                 }
             }
 
-            if (backDirection.HasValue)
-            {
-                Step(backDirectionCode);
-            }
-
-            return foundPath;
+            return null;
         }
 
         private long Step(int directionCode)
@@ -124,5 +160,7 @@ namespace aoc2019.Puzzles.Solutions
             [3] = new Point(-1, 0), // West
             [4] = new Point(1, 0)   // East
         };
+
+        private readonly Dictionary<Point, int> myDirectionCodes;
     }
 }
