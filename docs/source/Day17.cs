@@ -64,17 +64,9 @@ namespace aoc2019.Puzzles.Solutions
             commands.SelectMany(x => x).ForEach(x => intMachine.InputQueue.Enqueue(x));
             "n\n".ForEach(x => intMachine.InputQueue.Enqueue(x));
 
-            long lastResult = 0;
-            ReturnCode returnCode;
-            while (!new[] { ReturnCode.WaitingForInput, ReturnCode.Completed }.Contains(returnCode = intMachine.RunUntilBlockOrComplete()))
-            {
-                if (returnCode == ReturnCode.WrittenOutput)
-                {
-                    lastResult = intMachine.OutputQueue.Dequeue();
-                }
-            }
+            while (intMachine.RunUntilBlockOrComplete() != ReturnCode.Completed) { }
 
-            return lastResult.ToString();
+            return intMachine.OutputQueue.Last().ToString();
         }
 
         private char[] ConvertCommand(char[] commandSource)
@@ -109,7 +101,7 @@ namespace aoc2019.Puzzles.Solutions
                 for (var start = 0; start < sequenceLength - length * 2; start++)
                 {
                     var proposed = sequence.Slice(start, length);
-                    if (Contains(sequence.Slice(start + length), proposed))
+                    if (MemoryExtensions.Contains(sequence.Slice(start + length).Span, proposed.Span, StringComparison.Ordinal))
                     {
                         var repeating = proposed.ToArray();
                         var newSequence = sequence.ToArray();
@@ -132,8 +124,6 @@ namespace aoc2019.Puzzles.Solutions
             }
             return null;
         }
-
-        private bool Contains(Memory<char> a, Memory<char> b) => MemoryExtensions.Contains(a.Span, b.Span, StringComparison.Ordinal);
 
         private (int GarbageCount, int[] Indexes) ReplaceWithGarbage(char[] sequenceArray, char[] repeatingArray)
         {
@@ -161,6 +151,7 @@ namespace aoc2019.Puzzles.Solutions
 
         private async Task<List<char>> FollowPath(Dictionary<Point, char> map, Point startPos, Point startDirection)
         {
+            var turnCommands = new Dictionary<int, char> { [1] = 'R', [-1] = 'L' }; 
             var path = new List<char>();
             var pos = startPos;
             var directionIndex = Array.IndexOf(Directions, startDirection);
@@ -185,7 +176,7 @@ namespace aoc2019.Puzzles.Solutions
                 }
 
                 directionIndex += 4;
-                foreach (var (turnDelta, turnCommand) in TurnCommands)
+                foreach (var (turnDelta, turnCommand) in turnCommands)
                 {
                     var proposedDirectionIndex = (directionIndex + turnDelta + 4) % 4;
                     var proposedPos = pos + Directions[proposedDirectionIndex];
@@ -203,7 +194,7 @@ namespace aoc2019.Puzzles.Solutions
 
         private async Task<Dictionary<Point, char>> GetMap(SynchronousIntMachine intMachine)
         {
-            var east = new Point(1, 0);
+            var east = Directions[1];
             var map = new Dictionary<Point, char>();
             var pos = new Point(0, 0);
             while (intMachine.RunUntilBlockOrComplete() == ReturnCode.WrittenOutput)
@@ -229,7 +220,6 @@ namespace aoc2019.Puzzles.Solutions
 
         private readonly Point[] Directions = new[] { new Point(0, -1), new Point(1, 0), new Point(0, 1), new Point(-1, 0) };
         private readonly char[] RobotDirections = new[] { '^', '>', 'v', '<' };
-        private readonly Dictionary<int, char> TurnCommands = new Dictionary<int, char> { [1] = 'R', [-1] = 'L' };
 
         private const char Scaffolding = '#';
     }
