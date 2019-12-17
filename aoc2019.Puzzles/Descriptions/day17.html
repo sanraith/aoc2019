@@ -31,4 +31,61 @@
 </ul>
 <p>To calibrate the cameras, you need the <em>sum of the alignment parameters</em>.  In the above example, this is <code><em>76</em></code>.</p>
 <p>Run your ASCII program. <em>What is the sum of the alignment parameters</em> for the scaffold intersections?</p>
+</article><article class="day-desc"><h2 id="part2">--- Part Two ---</h2><p>Now for the tricky part: notifying all the other robots about the solar flare.  The vacuum robot can do this automatically if it gets into range of a robot. However, you can't see the other robots on the camera, so you need to be thorough instead: you need to make the vacuum robot <em>visit every part of the scaffold at least once</em>.</p>
+<p>The vacuum robot normally wanders randomly, but there isn't time for that today.  Instead, you can <em>override its movement logic</em> with new rules.</p>
+<p>Force the vacuum robot to wake up by changing the value in your ASCII program at address <code>0</code> from <code>1</code> to <code><em>2</em></code>. When you do this, you will be automatically prompted for the new movement rules that the vacuum robot should use. The ASCII program will use input instructions to receive them, but they need to be provided as ASCII code; end each line of logic with a single newline, ASCII code <code>10</code>.</p>
+<p>First, you will be prompted for the <em>main movement routine</em>.  The main routine may only call the <em>movement functions</em>: <code>A</code>, <code>B</code>, or <code>C</code>. Supply the movement functions to use as ASCII text, separating them with commas (<code>,</code>, ASCII code <code>44</code>), and ending the list with a newline (ASCII code <code>10</code>). For example, to call <code>A</code> twice, then alternate between <code>B</code> and <code>C</code> three times, provide the string <code>A,A,B,C,B,C,B,C</code> and then a newline.</p>
+<p>Then, you will be prompted for each <em>movement function</em>. Movement functions may use <code>L</code> to <em>turn left</em>, <code>R</code> to <em>turn right</em>, or a number to <em>move forward</em> that many units.  Movement functions may not call other movement functions.  Again, separate the actions with commas and end the list with a newline.  For example, to move forward <code>10</code> units, turn left, move forward <code>8</code> units, turn right, and finally move forward <code>6</code> units, provide the string <code>10,L,8,R,6</code> and then a newline.</p>
+<p>Finally, you will be asked whether you want to see a <em>continuous video feed</em>; provide either <code>y</code> or <code>n</code> and a newline.  Enabling the continuous video feed can help you see what's going on, but it also requires a significant amount of processing power, and may even cause your Intcode computer to overheat.</p>
+<p>Due to the limited amount of memory in the vacuum robot, the ASCII definitions of the main routine and the movement functions may each contain <em>at most 20 characters</em>, not counting the newline.</p>
+<p>For example, consider the following camera feed:</p>
+<pre><code>#######...#####
+#.....#...#...#
+#.....#...#...#
+......#...#...#
+......#...###.#
+......#.....#.#
+^########...#.#
+......#.#...#.#
+......#########
+........#...#..
+....#########..
+....#...#......
+....#...#......
+....#...#......
+....#####......
+</code></pre>
+<p>In order for the vacuum robot to <em>visit every part of the scaffold at least once</em>, one path it could take is:</p>
+<pre><code>R,8,R,8,R,4,R,4,R,8,L,6,L,2,R,4,R,4,R,8,R,8,R,8,L,6,L,2</code></pre>
+<p>Without the memory limit, you could just supply this whole string to function <code>A</code> and have the main routine call <code>A</code> once.  However, you'll need to split it into smaller parts.</p>
+<p>One approach is:</p>
+<ul>
+<li><em>Main routine: <code>A,B,C,B,A,C</code></em><br>(ASCII input: <code>65</code>, <code>44</code>, <code>66</code>, <code>44</code>, <code>67</code>, <code>44</code>, <code>66</code>, <code>44</code>, <code>65</code>, <code>44</code>, <code>67</code>, <code>10</code>)</li>
+<li><em>Function <code>A</code>:&nbsp;&nbsp;&nbsp;<code>R,8,R,8</code></em><br>(ASCII input: <code>82</code>, <code>44</code>, <code>56</code>, <code>44</code>, <code>82</code>, <code>44</code>, <code>56</code>, <code>10</code>)</li>
+<li><em>Function <code>B</code>:&nbsp;&nbsp;&nbsp;<code>R,4,R,4,R,8</code></em><br>(ASCII input: <code>82</code>, <code>44</code>, <code>52</code>, <code>44</code>, <code>82</code>, <code>44</code>, <code>52</code>, <code>44</code>, <code>82</code>, <code>44</code>, <code>56</code>, <code>10</code>)</li>
+<li><em>Function <code>C</code>:&nbsp;&nbsp;&nbsp;<code>L,6,L,2</code></em><br>(ASCII input: <code>76</code>, <code>44</code>, <code>54</code>, <code>44</code>, <code>76</code>, <code>44</code>, <code>50</code>, <code>10</code>)</li>
+</ul>
+<p>Visually, this would break the desired path into the following parts:</p>
+<pre><code>A,        B,            C,        B,            A,        C
+R,8,R,8,  R,4,R,4,R,8,  L,6,L,2,  R,4,R,4,R,8,  R,8,R,8,  L,6,L,2
+
+CCCCCCA...BBBBB
+C.....A...B...B
+C.....A...B...B
+......A...B...B
+......A...CCC.B
+......A.....C.B
+^AAAAAAAA...C.B
+......A.A...C.B
+......AAAAAA#AB
+........A...C..
+....BBBB#BBBB..
+....B...A......
+....B...A......
+....B...A......
+....BBBBA......
+</code></pre>
+<p>Of course, the scaffolding outside your ship is much more complex.</p>
+<p>As the vacuum robot finds other robots and notifies them of the impending solar flare, it also can't help but leave them squeaky clean, collecting any space dust it finds. Once it finishes the programmed set of movements, assuming it hasn't drifted off into space, the cleaning robot will return to its docking station and report the amount of space dust it collected as a large, non-ASCII value in a single output instruction.</p>
+<p>After visiting every part of the scaffold at least once, <em>how much dust does the vacuum robot report it has collected?</em></p>
 </article>
