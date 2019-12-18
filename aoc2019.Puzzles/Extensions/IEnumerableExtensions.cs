@@ -6,7 +6,7 @@ namespace aoc2019.Puzzles.Extensions
 {
     public static class IEnumerableExtensions
     {
-        public static IEnumerable<(TItem item, int index)> WithIndex<TItem>(this IEnumerable<TItem> sequence) => sequence.Select((x, i) => (x, i));
+        public static IEnumerable<(TItem Item, int Index)> WithIndex<TItem>(this IEnumerable<TItem> sequence) => sequence.Select((x, i) => (x, i));
 
         public static void Deconstruct<TValue>(this IEnumerable<TValue> sequence, out TValue v1, out TValue v2)
         {

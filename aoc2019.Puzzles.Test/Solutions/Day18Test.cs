@@ -37,9 +37,20 @@ namespace aoc2019.Puzzles.Test.Solutions
             Assert.That(await Solution.Part1Async(input), Is.EqualTo("132"));
         }
 
-
         [Test]
         public async Task Part1_Medium3()
+        {
+            var input = @"########################
+#@..............ac.GI.b#
+###d#e#f################
+###A#B#C################
+###g#h#i################
+########################";
+            Assert.That(await Solution.Part1Async(input), Is.EqualTo("81"));
+        }
+
+        [Test]
+        public async Task Part1_Large()
         {
             var input = @"#################
 #i.G..c...e..H.p#
@@ -54,22 +65,44 @@ namespace aoc2019.Puzzles.Test.Solutions
         }
 
         [Test]
-        public async Task Part1_Medium4()
+        public async Task Part2_Medium()
         {
-            var input = @"########################
-#@..............ac.GI.b#
-###d#e#f################
-###A#B#C################
-###g#h#i################
-########################";
-            Assert.That(await Solution.Part1Async(input), Is.EqualTo("81"));
+            var input = @"###############
+#d.ABC.#.....a#
+######...######
+######.@.######
+######...######
+#b.....#.....c#
+###############";
+            Assert.That(await Solution.Part2Async(input), Is.EqualTo("24"));
         }
 
-        //[Test]
-        public async Task Part2()
+        [Test]
+        public async Task Part2_Medium2()
         {
-            var input = @"";
-            Assert.That(await Solution.Part2Async(input), Is.EqualTo(""));
+            var input = @"#############
+#DcBa.#.GhKl#
+#.###...#I###
+#e#d#.@.#j#k#
+###C#...###J#
+#fEbA.#.FgHi#
+#############";
+            Assert.That(await Solution.Part2Async(input), Is.EqualTo("32"));
+        }
+
+        [Test]
+        public async Task Part2_Medium3()
+        {
+            var input = @"#############
+#g#f.D#..h#l#
+#F###e#E###.#
+#dCba...BcIJ#
+#####.@.#####
+#nK.L...G...#
+#M###N#H###.#
+#o#m..#i#jk.#
+#############";
+            Assert.That(await Solution.Part2Async(input), Is.EqualTo("72"));
         }
     }
 }
