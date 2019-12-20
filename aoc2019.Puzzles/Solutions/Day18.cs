@@ -45,7 +45,7 @@ namespace aoc2019.Puzzles.Solutions
         private async Task Backtrack(int[] robotPositions, List<char> keys, Dictionary<int, RelativeKey[]> relativeKeysByPos, Dictionary<string, int> states, int currentDistance = 0)
         {
             if (currentDistance >= myBestDistance) { return; }
-            if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(states.Count, 100000); }
+            if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(states.Count, robotPositions.Length == 1 ? 50000 : 200000); }
             if (keys.Count == myKeyCount && currentDistance < myBestDistance)
             {
                 myBestDistance = currentDistance;

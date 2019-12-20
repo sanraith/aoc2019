@@ -123,29 +123,52 @@ namespace aoc2019.ConsoleApp
             var input = File.ReadAllText(Path.Combine(rootDir, "Input", $"day{dayString}.txt"));
 
             Console.WriteLine($"Day {day}: {solutionMetadata.Title}");
-            await SolvePart(1, input, solution.Part1Async);
-            await SolvePart(2, input, solution.Part2Async);
+            await SolvePart(1, input, solution.Part1Async, solution);
+            await SolvePart(2, input, solution.Part2Async, solution);
         }
 
-        private static async Task SolvePart(int partNumber, string input, Func<string, Task<string>> action)
+        private static async Task SolvePart(int partNumber, string input, Func<string, Task<string>> action, ISolution solution)
         {
+            var emptyWaitingMessage = $"Calculating Part {partNumber}... ";
+            var waitingMessage = emptyWaitingMessage;
+
+            Console.Write(waitingMessage);
+
+            string result = null;
             try
             {
-                Console.Write($"Part {partNumber}: ");
-                var result = await action(input);
-                if (result.Contains(Environment.NewLine))
-                {
-                    result = Environment.NewLine + result;
-                }
-                Console.WriteLine(result);
+                solution.ProgressUpdated += ProgressUpdated;
+                result = await action(input);
             }
             catch (NotImplementedException)
             {
-                Console.WriteLine("Not implemented.");
+                result = "Not implemented.";
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                result = ex.ToString();
+            }
+            finally
+            {
+                solution.ProgressUpdated -= ProgressUpdated;
+            }
+
+            Console.Write($"\r{new string(' ', waitingMessage.Length)}\r");
+            Console.Write($"Part {partNumber}: ");
+            if (result.Contains(Environment.NewLine))
+            {
+                result = Environment.NewLine + result;
+            }
+            Console.WriteLine(result);
+
+            void ProgressUpdated(object _, SolutionProgressEventArgs args)
+            {
+                if (args.Progress.Percentage > 0)
+                {
+                    var prevLength = waitingMessage.Length;
+                    waitingMessage = $"\r{emptyWaitingMessage}{Math.Min(99.99, args.Progress.Percentage):0.00}%";
+                    Console.Write(waitingMessage + new string(' ', Math.Max(0, prevLength - waitingMessage.Length)));
+                }
             }
         }
 
