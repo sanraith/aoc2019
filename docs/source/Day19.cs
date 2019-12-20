@@ -1,8 +1,6 @@
 ﻿using aoc2019.Puzzles.Core;
-using aoc2019.Puzzles.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using static aoc2019.Puzzles.Solutions.Day09;
 using static aoc2019.Puzzles.Solutions.Day10;
@@ -17,7 +15,6 @@ namespace aoc2019.Puzzles.Solutions
         {
             var memory = IntMachineBase.ParseProgram(input);
             var sum = 0;
-            Console.WriteLine();
             for (var y = 0; y < 50; y++)
             {
                 for (var x = 0; x < 50; x++)
@@ -26,9 +23,7 @@ namespace aoc2019.Puzzles.Solutions
 
                     var isPulling = IsPulling(memory, x, y);
                     sum += isPulling ? 1 : 0;
-                    Console.Write(isPulling ? '#' : '.');
                 }
-                Console.WriteLine();
             }
 
             return sum.ToString();
@@ -102,26 +97,6 @@ namespace aoc2019.Puzzles.Solutions
 
             return new Point(startPoint.X, bottom);
         }
-
-        //private enum Margin { Top, Bottom };
-
-        //private static Point GetMargin(long[] memory, Point startPoint, Margin vertical)
-        //{
-        //    var margin = startPoint.Y;
-
-        //    if (IsPulling(memory, startPoint.X, margin) ^ vertical != Margin.Top)
-        //    {
-        //        while (IsPulling(memory, startPoint.X, margin)) { margin--; }
-        //        margin++;
-        //    }
-        //    else
-        //    {
-        //        while (!IsPulling(memory, startPoint.X, margin)) { margin++; }
-        //    }
-
-
-        //    return new Point(startPoint.X, margin);
-        //}
 
         private static Point GetStartPoint(long[] memory)
         {
