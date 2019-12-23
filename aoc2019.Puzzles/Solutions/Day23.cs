@@ -21,10 +21,10 @@ namespace aoc2019.Puzzles.Solutions
             {
                 foreach (var machine in machines)
                 {
-                    foreach (var (address, _, y) in HandleOutgoingPackets(MachineCount, queues, machine))
+                    foreach (var (address, _, y) in HandleOutgoingPackets(machine, queues))
                     {
                         if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }
-                        if (address > MachineCount)
+                        if (address == NatAddress)
                         {
                             return y.ToString();
                         }
@@ -50,10 +50,10 @@ namespace aoc2019.Puzzles.Solutions
                         idleCount++;
                     }
 
-                    foreach (var (address, x, y) in HandleOutgoingPackets(MachineCount, queues, machine))
+                    foreach (var (address, x, y) in HandleOutgoingPackets(machine, queues))
                     {
                         if (IsUpdateProgressNeeded()) { await UpdateProgressAsync(); }
-                        if (address > MachineCount)
+                        if (address == NatAddress)
                         {
                             natValue = (x, y);
                         }
@@ -74,13 +74,13 @@ namespace aoc2019.Puzzles.Solutions
             return lastNatDeliveredY.ToString();
         }
 
-        private IEnumerable<(int Address, long X, long Y)> HandleOutgoingPackets(int machineCount, Queue<long>[] queues, SynchronousIntMachine machine)
+        private static IEnumerable<(int Address, long X, long Y)> HandleOutgoingPackets(SynchronousIntMachine machine, Queue<long>[] queues)
         {
             while (machine.RunUntilBlockOrComplete() == ReturnCode.WrittenOutput)
             {
                 var packet = ReadPacket(machine);
                 var (address, x, y) = packet;
-                if (address < machineCount)
+                if (address < MachineCount)
                 {
                     queues[address].Enqueue(x);
                     queues[address].Enqueue(y);
@@ -122,5 +122,6 @@ namespace aoc2019.Puzzles.Solutions
         }
 
         private const int MachineCount = 50;
+        private const int NatAddress = 255;
     }
 }
