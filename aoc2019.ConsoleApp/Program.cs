@@ -146,7 +146,7 @@ namespace aoc2019.ConsoleApp
             }
             catch (Exception ex)
             {
-                result = ex.ToString();
+                result = $"({ex.GetType().Name}) {ex.Message}";
             }
             finally
             {
