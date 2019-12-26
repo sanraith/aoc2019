@@ -23,7 +23,7 @@ namespace aoc2019.Puzzles.Solutions
             var (rooms, collectedItems) = await DiscoverRoomsAndGatherItemsAsync(intMachine);
             var hullBreachRoom = rooms[HullBreach];
             var securityCheckpointRoom = rooms[SecurityCheckpoint];
-            var pathToSecurityCheck = GetPath(rooms, hullBreachRoom, securityCheckpointRoom);
+            var pathToSecurityCheck = GetPath(hullBreachRoom, securityCheckpointRoom);
             await FollowPath(intMachine, pathToSecurityCheck);
             var nextDirection = securityCheckpointRoom.Doors.Keys.Single(d => d != InverseDirections[pathToSecurityCheck.Last()]);
 
@@ -76,7 +76,7 @@ namespace aoc2019.Puzzles.Solutions
             }
         }
 
-        private List<string> GetPath(Dictionary<string, Room> rooms, Room startRoom, Room targetRoom)
+        private List<string> GetPath(Room startRoom, Room targetRoom)
         {
             var queue = new Queue<(Room Room, List<string> Path)>(new[] { (startRoom, new List<string>()) });
             var visited = new HashSet<Room>();
