@@ -43,7 +43,7 @@ To run a specific solution in console:
 
 To setup the environment for a new puzzle solution:
 
-- Set your [adventofcode.com](adventofcode.com) session cookie for `aoc2019.ConsoleApp` as a user secret:
+- Set your [adventofcode.com](https://adventofcode.com) session cookie for `aoc2019.ConsoleApp` as a user secret:
   - `dotnet user-secrets -p aoc2019.ConsoleApp set "SessionCookie"` **`"Your session cookie"`**
 - Run setup to create source, test, input and description files for the given day:
   - `dotnet run -p aoc2019.ConsoleApp --setup` **`[number of day]`**
