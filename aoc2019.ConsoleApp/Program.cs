@@ -216,12 +216,9 @@ namespace aoc2019.ConsoleApp
 
             var titleNode = articleNodes.First().SelectSingleNode("//h2");
             var puzzleTitle = puzzleTitleRegex.Match(titleNode.InnerText).Groups["title"].Value;
-            titleNode.InnerHtml = $"--- Part One ---";
-            Console.WriteLine($"Found {articleNodes.Count} parts. Title: {puzzleTitle}");
-            var description = articleNodes.Aggregate(string.Empty, (result, node) => result + node.OuterHtml);
 
             Console.WriteLine($"Saving description to {descriptionFile.FullName}");
-            File.WriteAllText(descriptionFile.FullName, description, Encoding.UTF8);
+            File.WriteAllText(descriptionFile.FullName, string.Empty, Encoding.UTF8);
 
             return puzzleTitle;
         }
